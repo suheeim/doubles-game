@@ -142,6 +142,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 <!-- ゲーム画面 -->
 <div id="screen-game" class="screen">
   <div id="gameList"></div>
+  <button class="btn-secondary" onclick="addGame()" style="margin-top:12px">➕ ゲームを追加</button>
   <button class="btn-danger" onclick="showResult()">🏆 ゲーム終了・結果へ</button>
 </div>
 
@@ -443,6 +444,24 @@ function confirmScore(idx) {
   renderGames();
 }
 
+function addGame() {
+  var shuffled = shuffleWithPairAvoidance(players);
+  var teamA = [shuffled[0], shuffled[1]];
+  var teamB = [shuffled[2], shuffled[3]];
+  var waiting = shuffled.slice(4);
+  var k1 = getPairKey(teamA[0], teamA[1]);
+  var k2 = getPairKey(teamB[0], teamB[1]);
+  pairHistory[k1] = (pairHistory[k1] || 0) + 1;
+  pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+  games.push({ id: games.length, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
+  renderGames();
+  // 追加したゲームまでスクロール
+  setTimeout(function() {
+    var last = document.getElementById('game-card-' + (games.length - 1));
+    if (last) last.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
 function toggleGame(idx) {
   games[idx].expanded = !games[idx].expanded;
   renderGames();
@@ -487,11 +506,11 @@ function showResult() {
   var rank = 1;
   sorted.forEach(function(p, i) {
     if (i > 0 && (p.wins < sorted[i-1].wins || (p.wins === sorted[i-1].wins && p.points < sorted[i-1].points))) rank = i + 1;
-    var medal = rank <= 3 ? medals[rank-1] : rank;
+    var medal = rank <= 3 ? medals[rank-1] : (rank + '位');
     var cls = rank <= 3 ? medalClass[rank-1] : '';
     html += '<div class="rank-row">'
       + '<div class="rank-num ' + cls + '">' + medal + '</div>'
-      + '<div class="rank-name">' + p.name + '</div>'
+      + '<div class="rank-name">' + p.name.replace(/^\d+\s*/, '') + '</div>'
       + '<div style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + '勝（' + p.points + '点）</div>'
       + '</div>';
   });
