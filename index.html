@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ダブルスゲーム">
+<title>ダブルスゲーム</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #7B6FD4; --green-dark: #5A50AA; --green-light: #EDEAFF;
+  --gray: #f0f3f0; --border: rgba(0,0,0,0.1);
+  --text: #1a1a1a; --text2: #555; --text3: #999;
+  --surface: #fff; --bg: #f5f7f5;
+  --radius: 14px; --radius-sm: 9px;
+  --amber: #BA7517; --amber-light: #FAEEDA;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { overflow-x: hidden; }
+body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
+.header { background: var(--green); color: #fff; padding: 48px 20px 18px; }
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 13px; opacity: .8; margin-top: 2px; }
+.screen { display: none; padding: 16px; }
+.screen.active { display: block; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; overflow: visible; }
+.label { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: .08em; margin-bottom: 8px; }
+.check-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; cursor: pointer; }
+.check-row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--green); flex-shrink: 0; }
+.input-row { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0 12px; gap: 6px; margin-bottom: 8px; }
+.input-row input { flex: 1; font-size: 22px; font-weight: 700; color: var(--green); text-align: center; padding: 10px 0; border: none; outline: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; }
+.input-row span { font-size: 14px; color: var(--text3); }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
+.step-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+.name-list { display: flex; flex-direction: column; gap: 8px; }
+.name-row { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; overflow: visible; }
+.name-num { width: 26px; height: 26px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.name-input { flex: 1; min-width: 0; font-size: 15px; border: none; outline: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; }
+.btn-primary { width: 100%; padding: 15px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
+.btn-primary:active { background: var(--green-dark); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+.btn-secondary { width: 100%; padding: 13px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 8px; }
+.btn-danger { width: 100%; padding: 15px; background: #E24B4A; color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; }
+
+/* ゲームカード */
+.game-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: visible; transition: all .3s; }
+.game-card.active { border-color: var(--green); }
+.game-card.done { border-color: #ddd; background: #f9f9f9; }
+.game-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--gray); }
+.game-header.active { background: var(--green); color: #fff; }
+.game-header.done { background: #e8e8e8; color: var(--text3); }
+.game-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.game-body { padding: 12px; overflow: visible; }
+.vs-grid { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
+.team { background: var(--gray); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+.team.winner { background: var(--green-light); border: 2px solid var(--green); }
+.team-lbl { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .08em; margin-bottom: 4px; }
+.pname { font-size: 14px; font-weight: 500; padding: 2px 0; }
+.vs-text { text-align: center; font-size: 14px; font-weight: 700; color: var(--text3); }
+.score-row { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.score-inputs { display: flex; align-items: center; gap: 8px; width: 100%; }
+.score-input { flex: 1; min-width: 0; text-align: center; font-size: 20px; font-weight: 700; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-family: 'Noto Sans JP', sans-serif; outline: none; }
+.score-input:focus { border-color: var(--green); }
+.score-input.done { border: none; background: transparent; color: var(--text2); pointer-events: none; }
+.score-vs { font-size: 14px; font-weight: 700; color: var(--text3); text-align: center; }
+.confirm-btn { width: 100%; padding: 10px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+.confirm-btn:disabled { opacity: .4; cursor: not-allowed; }
+.edit-btn { padding: 6px 12px; background: var(--surface); color: var(--text3); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+.game-body-collapsed { display: none; }
+.game-header-done { cursor: pointer; }
+
+/* ランキング */
+.rank-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.rank-num { font-size: 18px; font-weight: 700; color: var(--text3); min-width: 32px; }
+.rank-num.gold { color: #F0A500; }
+.rank-num.silver { color: #A0A0A0; }
+.rank-num.bronze { color: #C07020; }
+.rank-name { flex: 1; font-size: 15px; font-weight: 500; }
+.rank-wins { font-size: 16px; font-weight: 700; color: var(--green); }
+.empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
+.warn { background: var(--amber-light); color: var(--amber); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; margin-top: 8px; }
+.mic-btn {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gray); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 15px; transition: background .15s;
+}
+.mic-btn.recording { background: #FCEBEB; border-color: #E24B4A; animation: pulse .6s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+</style>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+</head>
+<body>
+
+<div class="header">
+  <h1>🎾 ダブルスゲーム</h1>
+  <p>ゲーム組み合わせ＆スコア管理</p>
+</div>
+
+<!-- メイン画面 -->
+<div id="screen-main" class="screen active">
+  <label class="check-row">
+    <input type="checkbox" id="noNameChk" onchange="onNoNameChange()">
+    <span style="font-size:15px;font-weight:500">名前入力不要（番号のみ）</span>
+    <span style="font-size:12px;color:var(--text3);margin-left:auto">番号で進行</span>
+  </label>
+
+  <div class="card">
+    <div class="step-title"><span class="step-num">1</span>参加者数を入力</div>
+    <div class="input-row">
+      <input id="playerCountInput" type="number" inputmode="numeric" placeholder="例: 7" min="4" max="20"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
+      <span>人</span>
+      <button class="mic-btn" id="micPlayer" type="button" onclick="startVoiceCount('playerCountInput', 'micPlayer', 4, 20, onSettingChange)">🎤</button>
+    </div>
+    <div id="countError" style="font-size:12px;color:var(--amber);display:none;margin-top:4px"></div>
+  </div>
+
+  <div class="card">
+    <div class="step-title"><span class="step-num">2</span>ゲーム回数を入力</div>
+    <div class="input-row">
+      <input id="gameCountInput" type="number" inputmode="numeric" placeholder="例: 5" min="1" max="30"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
+      <span>回</span>
+      <button class="mic-btn" id="micGame" type="button" onclick="startVoiceCount('gameCountInput', 'micGame', 1, 30, onSettingChange)">🎤</button>
+    </div>
+  </div>
+
+  <div class="card" id="nameCard" style="display:none">
+    <div class="step-title"><span class="step-num">3</span>名前を入力（省略可）</div>
+    <div class="name-list" id="nameList"></div>
+  </div>
+
+  <button class="btn-primary" id="startBtn" onclick="startGame()" disabled>
+    🎾 ゲーム組み合わせ作成
+  </button>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="screen-game" class="screen">
+  <div id="gameList"></div>
+  <button class="btn-danger" onclick="showResult()">🏆 ゲーム終了・結果へ</button>
+</div>
+
+<!-- 結果画面 -->
+<div id="screen-result" class="screen">
+  <div class="card">
+    <div class="label">🏆 個人ランキング（勝利数）</div>
+    <div id="rankList"></div>
+  </div>
+  <button class="btn-primary" onclick="resetAll()">🔄 最初からやり直す</button>
+</div>
+
+<script>
+var playerCount = 0;
+var activeRecognition = null;
+
+function startVoiceCount(inputId, btnId, min, max, callback) {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('音声入力はSafari（iOS）またはChrome（Android）をお試しください。'); return; }
+  var btn = document.getElementById(btnId);
+  var inp = document.getElementById(inputId);
+  if (activeRecognition) { activeRecognition.stop(); activeRecognition = null; return; }
+  var rec = new SR();
+  rec.lang = 'ja-JP';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  activeRecognition = rec;
+  btn.classList.add('recording');
+  btn.textContent = '🔴';
+  rec.onresult = function(e) {
+    var transcript = e.results[0][0].transcript;
+    var num = transcript.replace(/人|回/g, '').replace(/[^\d０-９]/g, '')
+      .replace(/[０-９]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+    if (!num) {
+      var kanji = {'一':'1','二':'2','三':'3','四':'4','五':'5','六':'6','七':'7','八':'8','九':'9','十':'10','十一':'11','十二':'12','十三':'13','十四':'14','十五':'15','十六':'16','十七':'17','十八':'18','十九':'19','二十':'20'};
+      num = kanji[transcript.replace(/人|回/g,'')] || '';
+    }
+    if (num) { inp.value = num; if (callback) callback(); }
+    btn.classList.remove('recording'); btn.textContent = '🎤';
+    activeRecognition = null;
+  };
+  rec.onerror = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
+  rec.onend = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
+  rec.start();
+}
+
+function startVoice(idx) {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('音声入力はSafari（iOS）またはChrome（Android）をお試しください。'); return; }
+  var btn = document.getElementById('mic' + idx);
+  var inp = document.getElementById('pname' + idx);
+  if (activeRecognition) { activeRecognition.stop(); activeRecognition = null; return; }
+  var rec = new SR();
+  rec.lang = 'ja-JP';
+  rec.interimResults = false;
+  rec.maxAlternatives = 5;
+  activeRecognition = rec;
+  btn.classList.add('recording');
+  btn.textContent = '🔴';
+  rec.onresult = function(e) {
+    var best = null;
+    for (var k = 0; k < e.results[0].length; k++) {
+      var candidate = e.results[0][k].transcript;
+      if (/^[぀-ゟ゠-ヿ\s]+$/.test(candidate)) { best = candidate; break; }
+    }
+    if (!best) best = e.results[0][0].transcript;
+    var t = best.slice(0, 12).replace(/[ァ-ヶ]/g, function(c) {
+      return String.fromCharCode(c.charCodeAt(0) - 0x60);
+    }).replace(/[^぀-ゟ -~\s]/g, function(c) {
+      return /[ -~]/.test(c) ? c : '';
+    }).trim();
+    if (!t) t = best.slice(0, 12);
+    inp.value = t;
+    btn.classList.remove('recording'); btn.textContent = '🎤';
+    activeRecognition = null;
+    if (idx < playerCount - 1) {
+      setTimeout(function() {
+        var next = document.getElementById('pname' + (idx + 1));
+        if (next) next.focus();
+      }, 150);
+    }
+  };
+  rec.onerror = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
+  rec.onend = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
+  rec.start();
+}
+var gameCount = 0;
+var noNameMode = false;
+var players = [];
+var games = [];
+
+function onNoNameChange() {
+  noNameMode = document.getElementById('noNameChk').checked;
+  onSettingChange();
+}
+
+function onSettingChange() {
+  var pc = parseInt(document.getElementById('playerCountInput').value) || 0;
+  var gc = parseInt(document.getElementById('gameCountInput').value) || 0;
+  var err = document.getElementById('countError');
+  var nameCard = document.getElementById('nameCard');
+  var startBtn = document.getElementById('startBtn');
+
+  if (pc >= 4 && pc <= 20) {
+    err.style.display = 'none';
+    playerCount = pc;
+    if (!noNameMode) {
+      renderNameList();
+      nameCard.style.display = 'block';
+    } else {
+      nameCard.style.display = 'none';
+    }
+  } else {
+    if (pc > 0) { err.textContent = '4〜20人で入力してください'; err.style.display = 'block'; }
+    nameCard.style.display = 'none';
+    playerCount = 0;
+  }
+
+  gameCount = gc;
+  var ok = playerCount >= 4 && gameCount >= 1;
+  startBtn.disabled = !ok;
+}
+
+function renderNameList() {
+  var list = document.getElementById('nameList');
+  var existing = Array.from(list.querySelectorAll('.name-input')).map(function(i) { return i.value; });
+  list.innerHTML = '';
+  for (var i = 0; i < playerCount; i++) {
+    var row = document.createElement('div');
+    row.className = 'name-row';
+    var num = document.createElement('div');
+    num.className = 'name-num';
+    num.textContent = i + 1;
+    var inp = document.createElement('input');
+    inp.className = 'name-input';
+    inp.id = 'pname' + i;
+    inp.type = 'text';
+    inp.placeholder = '選手 ' + (i + 1);
+    inp.maxLength = 12;
+    inp.value = existing[i] || '';
+    var mic = document.createElement('button');
+    mic.className = 'mic-btn';
+    mic.id = 'mic' + i;
+    mic.textContent = '🎤';
+    mic.type = 'button';
+    (function(idx) {
+      mic.addEventListener('click', function() { startVoice(idx); });
+    })(i);
+    row.appendChild(num);
+    row.appendChild(inp);
+    row.appendChild(mic);
+    list.appendChild(row);
+  }
+}
+
+function getPlayers() {
+  var result = [];
+  for (var i = 0; i < playerCount; i++) {
+    if (noNameMode) {
+      result.push(String(i + 1));
+    } else {
+      var el = document.getElementById('pname' + i);
+      var v = el ? el.value.trim() : '';
+      result.push(v ? (String(i+1) + ' ' + v) : String(i+1));
+    }
+  }
+  return result;
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+var pairHistory = {};
+
+function getPairKey(a, b) { return [a, b].sort().join('|||'); }
+function getPairCount(a, b) { return pairHistory[getPairKey(a, b)] || 0; }
+
+function shuffleWithPairAvoidance(arr) {
+  var best = null, bestScore = Infinity;
+  for (var t = 0; t < 100; t++) {
+    var s = shuffle(arr);
+    var score = getPairCount(s[0], s[1]) + getPairCount(s[2], s[3]);
+    if (score < bestScore) { bestScore = score; best = s; if (score === 0) break; }
+  }
+  return best;
+}
+
+function startGame() {
+  players = getPlayers();
+  games = [];
+  pairHistory = {};
+
+  for (var g = 0; g < gameCount; g++) {
+    var shuffled = shuffleWithPairAvoidance(players);
+    var teamA = [shuffled[0], shuffled[1]];
+    var teamB = [shuffled[2], shuffled[3]];
+    var waiting = shuffled.slice(4);
+    // ペア記録
+    var k1 = getPairKey(teamA[0], teamA[1]);
+    var k2 = getPairKey(teamB[0], teamB[1]);
+    pairHistory[k1] = (pairHistory[k1] || 0) + 1;
+    pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+    games.push({ id: g, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
+  }
+
+  renderGames();
+  showScreen('game');
+}
+
+function renderGames() {
+  var list = document.getElementById('gameList');
+  list.innerHTML = '';
+  games.forEach(function(g, i) {
+    var isActive = !g.done && (i === 0 || games[i-1].done);
+    var card = document.createElement('div');
+    card.className = 'game-card' + (g.done ? ' done' : (isActive ? ' active' : ''));
+    card.id = 'game-card-' + i;
+
+    var headerClass = g.done ? 'done' : (isActive ? 'active' : '');
+    var headerIcon = g.done ? '✅' : (isActive ? '🎾' : '⏳');
+    var headerTitle = '第' + (i+1) + 'ゲーム';
+    var scoreSum = g.done ? ' ' + g.scoreA + '-' + g.scoreB : '';
+    var winnerLabel = g.done && g.winner ? '（' + (g.winner === 'A' ? 'A勝' : 'B勝') + '）' : (g.done ? '（引分）' : '');
+    var collapsed = g.done && !g.expanded;
+
+    var header = '<div class="game-header ' + headerClass + '" style="' + (g.done ? 'cursor:pointer' : '') + '">'
+      + '<span class="game-title" ' + (g.done ? 'onclick="toggleGame(' + i + ')"' : '') + ' style="flex:1">' + headerIcon + ' ' + headerTitle + (g.done ? scoreSum + winnerLabel : '') + '</span>'
+      + (g.done ? '<button class="edit-btn" onclick="event.stopPropagation();editGame(' + i + ')" style="margin-right:6px;font-size:11px;padding:3px 8px" title="点数変更">✏️</button>' : '')
+      + (g.done ? '<span style="font-size:12px" onclick="toggleGame(' + i + ')">' + (collapsed ? '▶' : '▼') + '</span>' : '')
+      + '</div>';
+
+    var teamAClass = 'team' + (g.winner === 'A' ? ' winner' : '');
+    var teamBClass = 'team' + (g.winner === 'B' ? ' winner' : '');
+    var winIconA = g.winner === 'A' ? ' 🏆' : '';
+    var winIconB = g.winner === 'B' ? ' 🏆' : '';
+
+    var body = '<div class="game-body">'
+      + '<div class="vs-grid">'
+      + '<div class="' + teamAClass + '"><div class="team-lbl">TEAM A' + winIconA + '</div><div class="pname">' + g.teamA[0] + '</div><div class="pname">' + g.teamA[1] + '</div></div>'
+      + '<div class="vs-text">VS</div>'
+      + '<div class="' + teamBClass + '"><div class="team-lbl">TEAM B' + winIconB + '</div><div class="pname">' + g.teamB[0] + '</div><div class="pname">' + g.teamB[1] + '</div></div>'
+      + '</div>';
+
+
+
+    if (g.done) {
+      body += '<div class="score-inputs" style="margin-top:8px">'
+        + '<div class="score-input done" style="text-align:center">' + g.scoreA + '</div>'
+        + '<div class="score-vs">-</div>'
+        + '<div class="score-input done" style="text-align:center">' + g.scoreB + '</div>'
+        + '</div>';
+    } else if (isActive) {
+      body += '<div class="score-row">'
+        + '<div class="score-inputs">'
+        + '<input class="score-input" id="scoreA-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreA + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ')">'
+        + '<div class="score-vs">-</div>'
+        + '<input class="score-input" id="scoreB-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreB + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ')">'
+        + '</div>'
+        + '<button class="confirm-btn" id="confirmBtn-' + i + '" onclick="confirmScore(' + i + ')" disabled>✅ 確定</button>'
+        + '</div>';
+    }
+
+
+    body += '</div>';
+    if (g.done && !g.expanded) {
+      card.innerHTML = header;
+    } else {
+      card.innerHTML = header + body;
+    }
+    list.appendChild(card);
+  });
+}
+
+function checkScore(idx) {
+  var a = document.getElementById('scoreA-' + idx);
+  var b = document.getElementById('scoreB-' + idx);
+  var btn = document.getElementById('confirmBtn-' + idx);
+  if (!btn) return;
+  var ok = a && b && a.value !== '' && b.value !== '';
+  btn.disabled = !ok;
+}
+
+function confirmScore(idx) {
+  var sA = document.getElementById('scoreA-' + idx).value;
+  var sB = document.getElementById('scoreB-' + idx).value;
+  if (sA === '' || sB === '') { alert('両チームの点数を入力してください'); return; }
+  var a = parseInt(sA), b = parseInt(sB);
+  games[idx].scoreA = sA;
+  games[idx].scoreB = sB;
+  games[idx].done = true;
+  games[idx].expanded = false;
+  games[idx].winner = a > b ? 'A' : (b > a ? 'B' : null);
+  renderGames();
+}
+
+function toggleGame(idx) {
+  games[idx].expanded = !games[idx].expanded;
+  renderGames();
+}
+
+function editGame(idx) {
+  games[idx].done = false;
+  games[idx].winner = null;
+  renderGames();
+  // 既存の値があれば確定ボタンを活性化
+  setTimeout(function() { checkScore(idx); }, 50);
+}
+
+function showResult() {
+  var stats = {};
+  players.forEach(function(p) { stats[p] = { wins: 0, points: 0 }; });
+
+  games.forEach(function(g) {
+    if (!g.done) return;
+    var sA = parseInt(g.scoreA) || 0;
+    var sB = parseInt(g.scoreB) || 0;
+    // 得点を各選手に加算
+    g.teamA.forEach(function(p) { if (stats[p]) stats[p].points += sA; });
+    g.teamB.forEach(function(p) { if (stats[p]) stats[p].points += sB; });
+    // 勝利数
+    if (!g.winner) return;
+    var winners = g.winner === 'A' ? g.teamA : g.teamB;
+    winners.forEach(function(p) { if (stats[p]) stats[p].wins += 1; });
+  });
+
+  var sorted = Object.keys(stats).map(function(p) {
+    return { name: p, wins: stats[p].wins, points: stats[p].points };
+  }).sort(function(a, b) {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    return b.points - a.points; // 勝利数同じ場合は得点合計で決める
+  });
+
+  var rankList = document.getElementById('rankList');
+  var medals = ['🥇', '🥈', '🥉'];
+  var medalClass = ['gold', 'silver', 'bronze'];
+  var html = '';
+  var rank = 1;
+  sorted.forEach(function(p, i) {
+    if (i > 0 && (p.wins < sorted[i-1].wins || (p.wins === sorted[i-1].wins && p.points < sorted[i-1].points))) rank = i + 1;
+    var medal = rank <= 3 ? medals[rank-1] : rank;
+    var cls = rank <= 3 ? medalClass[rank-1] : '';
+    html += '<div class="rank-row">'
+      + '<div class="rank-num ' + cls + '">' + medal + '</div>'
+      + '<div class="rank-name">' + p.name + '</div>'
+      + '<div style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + '勝（' + p.points + '点）</div>'
+      + '</div>';
+  });
+  rankList.innerHTML = html || '<div class="empty">まだ結果がありません</div>';
+
+  showScreen('result');
+}
+
+function showScreen(name) {
+  ['main','game','result'].forEach(function(n) {
+    document.getElementById('screen-' + n).classList.toggle('active', n === name);
+  });
+}
+
+function resetAll() {
+  playerCount = 0; gameCount = 0; noNameMode = false; players = []; games = []; pairHistory = {};
+  document.getElementById('playerCountInput').value = '';
+  document.getElementById('gameCountInput').value = '';
+  document.getElementById('noNameChk').checked = false;
+  document.getElementById('nameCard').style.display = 'none';
+  document.getElementById('nameList').innerHTML = '';
+  document.getElementById('startBtn').disabled = true;
+  showScreen('main');
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').then(function() {
+      console.log('SW registered');
+    });
+  });
+}
+</script>
+</body>
+</html>
