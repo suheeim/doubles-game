@@ -221,7 +221,14 @@ function startVoice(idx) {
   btn.classList.add('recording');
   btn.textContent = '🔴';
   rec.onresult = function(e) {
-    var best = e.results[0][0].transcript;
+    // ひらがなのみの候補を優先して探す
+    var best = null;
+    for (var k = 0; k < e.results[0].length; k++) {
+      var c = e.results[0][k].transcript;
+      if (/^[\u3041-\u3096\s]+$/.test(c)) { best = c; break; }
+    }
+    if (!best) best = e.results[0][0].transcript;
+    // ひらがな→カタカナ変換し、それ以外（漢字等）は除去
     var t = best.slice(0, 12).replace(/[\u3041-\u3096]/g, function(c) {
       return String.fromCharCode(c.charCodeAt(0) + 0x60);
     }).replace(/[^\u30A0-\u30FFa-zA-Z0-9\s]/g, '').trim();
