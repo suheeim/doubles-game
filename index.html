@@ -88,6 +88,14 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 }
 .mic-btn.recording { background: #FCEBEB; border-color: #E24B4A; animation: pulse .6s infinite alternate; }
 @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+.tab-bar { display: flex; background: var(--surface); border-bottom: 2px solid var(--border); }
+.tab-btn { flex: 1; padding: 12px 4px 10px; border: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 700; color: var(--text3); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color .15s, border-color .15s; }
+.tab-btn .tab-icon { font-size: 18px; }
+.tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+.tab-btn:disabled { opacity: .35; cursor: not-allowed; }
+body.finished #addGameBtn,
+body.finished #endGameBtn,
+body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed; }
 </style>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -95,9 +103,17 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 </head>
 <body>
 
-<div class="header">
-  <h1>🎾 ダブルスゲーム</h1>
-  <p>ゲーム組み合わせ＆スコア管理</p>
+<div class="header" style="display:flex;align-items:center;justify-content:space-between;">
+  <div>
+    <h1>🎾 ダブルスゲーム</h1>
+    <p>ゲーム組み合わせ＆スコア管理</p>
+  </div>
+  <button id="resetBtn" onclick="resetAll()" style="background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.5);border-radius:50%;width:38px;height:38px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="リセット">🔄</button>
+</div>
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-main" onclick="showScreen('main')"><span class="tab-icon">⚙️</span>設定</button>
+  <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled><span class="tab-icon">🎾</span>ゲーム</button>
+  <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled><span class="tab-icon">🏆</span>結果</button>
 </div>
 
 <!-- メイン画面 -->
@@ -142,8 +158,10 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 <!-- ゲーム画面 -->
 <div id="screen-game" class="screen">
   <div id="gameList"></div>
-  <button class="btn-secondary" onclick="addGame()" style="margin-top:12px">➕ ゲームを追加</button>
-  <button class="btn-danger" onclick="showResult()">🏆 ゲーム終了・結果へ</button>
+  <div id="gameBtns">
+    <button class="btn-secondary" id="addGameBtn" onclick="addGame()">＋ ゲームを追加</button>
+    <button class="btn-danger" id="endGameBtn" onclick="showResult()">🏆 ゲーム終了・結果へ</button>
+  </div>
 </div>
 
 <!-- 結果画面 -->
@@ -203,17 +221,10 @@ function startVoice(idx) {
   btn.classList.add('recording');
   btn.textContent = '🔴';
   rec.onresult = function(e) {
-    var best = null;
-    for (var k = 0; k < e.results[0].length; k++) {
-      var candidate = e.results[0][k].transcript;
-      if (/^[぀-ゟ゠-ヿ\s]+$/.test(candidate)) { best = candidate; break; }
-    }
-    if (!best) best = e.results[0][0].transcript;
-    var t = best.slice(0, 12).replace(/[ァ-ヶ]/g, function(c) {
-      return String.fromCharCode(c.charCodeAt(0) - 0x60);
-    }).replace(/[^぀-ゟ -~\s]/g, function(c) {
-      return /[ -~]/.test(c) ? c : '';
-    }).trim();
+    var best = e.results[0][0].transcript;
+    var t = best.slice(0, 12).replace(/[\u3041-\u3096]/g, function(c) {
+      return String.fromCharCode(c.charCodeAt(0) + 0x60);
+    }).replace(/[^\u30A0-\u30FFa-zA-Z0-9\s]/g, '').trim();
     if (!t) t = best.slice(0, 12);
     inp.value = t;
     btn.classList.remove('recording'); btn.textContent = '🎤';
@@ -233,6 +244,7 @@ var gameCount = 0;
 var noNameMode = false;
 var players = [];
 var games = [];
+var isFinished = false;
 
 function onNoNameChange() {
   noNameMode = document.getElementById('noNameChk').checked;
@@ -306,7 +318,7 @@ function getPlayers() {
     } else {
       var el = document.getElementById('pname' + i);
       var v = el ? el.value.trim() : '';
-      result.push(v ? (String(i+1) + ' ' + v) : String(i+1));
+      result.push(v ? v : String(i+1));
     }
   }
   return result;
@@ -355,6 +367,7 @@ function startGame() {
   }
 
   renderGames();
+  enableTab('game');
   showScreen('game');
 }
 
@@ -372,12 +385,12 @@ function renderGames() {
     var headerTitle = '第' + (i+1) + 'ゲーム';
     var scoreSum = g.done ? ' ' + g.scoreA + '-' + g.scoreB : '';
     var winnerLabel = g.done && g.winner ? '（' + (g.winner === 'A' ? 'A勝' : 'B勝') + '）' : (g.done ? '（引分）' : '');
-    var collapsed = g.done && !g.expanded;
+    var collapsed = g.done && !g.expanded && !isFinished;
 
-    var header = '<div class="game-header ' + headerClass + '" style="' + (g.done ? 'cursor:pointer' : '') + '">'
-      + '<span class="game-title" ' + (g.done ? 'onclick="toggleGame(' + i + ')"' : '') + ' style="flex:1">' + headerIcon + ' ' + headerTitle + (g.done ? scoreSum + winnerLabel : '') + '</span>'
-      + (g.done ? '<button class="edit-btn" onclick="event.stopPropagation();editGame(' + i + ')" style="margin-right:6px;font-size:11px;padding:3px 8px" title="点数変更">✏️</button>' : '')
-      + (g.done ? '<span style="font-size:12px" onclick="toggleGame(' + i + ')">' + (collapsed ? '▶' : '▼') + '</span>' : '')
+    var header = '<div class="game-header ' + headerClass + '" style="' + (g.done && !isFinished ? 'cursor:pointer' : '') + '">'
+      + '<span class="game-title" ' + (g.done && !isFinished ? 'onclick="toggleGame(' + i + ')"' : '') + ' style="flex:1">' + headerIcon + ' ' + headerTitle + (g.done ? scoreSum + winnerLabel : '') + '</span>'
+      + (g.done && !isFinished ? '<button class="edit-btn" onclick="event.stopPropagation();editGame(' + i + ')" style="margin-right:6px;font-size:11px;padding:3px 8px" title="点数変更">✏️</button>' : '')
+      + (g.done && !isFinished ? '<span style="font-size:12px" onclick="toggleGame(' + i + ')">' + (collapsed ? '▶' : '▼') + '</span>' : '')
       + '</div>';
 
     var teamAClass = 'team' + (g.winner === 'A' ? ' winner' : '');
@@ -413,13 +426,18 @@ function renderGames() {
 
 
     body += '</div>';
-    if (g.done && !g.expanded) {
+    if (g.done && !g.expanded && !isFinished) {
       card.innerHTML = header;
     } else {
       card.innerHTML = header + body;
     }
     list.appendChild(card);
   });
+  // ボタン状態を常に同期
+  var ab = document.getElementById('addGameBtn');
+  var eb = document.getElementById('endGameBtn');
+  if (ab) ab.disabled = isFinished;
+  if (eb) eb.disabled = isFinished;
 }
 
 function checkScore(idx) {
@@ -444,24 +462,6 @@ function confirmScore(idx) {
   renderGames();
 }
 
-function addGame() {
-  var shuffled = shuffleWithPairAvoidance(players);
-  var teamA = [shuffled[0], shuffled[1]];
-  var teamB = [shuffled[2], shuffled[3]];
-  var waiting = shuffled.slice(4);
-  var k1 = getPairKey(teamA[0], teamA[1]);
-  var k2 = getPairKey(teamB[0], teamB[1]);
-  pairHistory[k1] = (pairHistory[k1] || 0) + 1;
-  pairHistory[k2] = (pairHistory[k2] || 0) + 1;
-  games.push({ id: games.length, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
-  renderGames();
-  // 追加したゲームまでスクロール
-  setTimeout(function() {
-    var last = document.getElementById('game-card-' + (games.length - 1));
-    if (last) last.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
-}
-
 function toggleGame(idx) {
   games[idx].expanded = !games[idx].expanded;
   renderGames();
@@ -476,6 +476,12 @@ function editGame(idx) {
 }
 
 function showResult() {
+  isFinished = true;
+  document.body.classList.add('finished');
+  // 未完了ゲームを除外
+  games = games.filter(function(g) { return g.done; });
+  enableTab('result');
+  renderGames();
   var stats = {};
   players.forEach(function(p) { stats[p] = { wins: 0, points: 0 }; });
 
@@ -506,12 +512,12 @@ function showResult() {
   var rank = 1;
   sorted.forEach(function(p, i) {
     if (i > 0 && (p.wins < sorted[i-1].wins || (p.wins === sorted[i-1].wins && p.points < sorted[i-1].points))) rank = i + 1;
-    var medal = rank <= 3 ? medals[rank-1] : (rank + '位');
+    var medal = rank <= 3 ? medals[rank-1] : rank;
     var cls = rank <= 3 ? medalClass[rank-1] : '';
     html += '<div class="rank-row">'
       + '<div class="rank-num ' + cls + '">' + medal + '</div>'
-      + '<div class="rank-name">' + p.name.replace(/^\d+\s*/, '') + '</div>'
-      + '<div style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + '勝（' + p.points + '点）</div>'
+      + '<div class="rank-name">' + p.name + '</div>'
+      + '<div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + '勝</span><span style="font-size:12px;color:var(--text3);font-weight:400">（' + p.points + '点）</span></div>'
       + '</div>';
   });
   rankList.innerHTML = html || '<div class="empty">まだ結果がありません</div>';
@@ -519,20 +525,51 @@ function showResult() {
   showScreen('result');
 }
 
+function addGame() {
+  if (players.length < 4) return;
+  var shuffled = shuffleWithPairAvoidance(players);
+  var teamA = [shuffled[0], shuffled[1]];
+  var teamB = [shuffled[2], shuffled[3]];
+  var waiting = shuffled.slice(4);
+  var k1 = getPairKey(teamA[0], teamA[1]);
+  var k2 = getPairKey(teamB[0], teamB[1]);
+  pairHistory[k1] = (pairHistory[k1] || 0) + 1;
+  pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+  var idx = games.length;
+  games.push({ id: idx, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
+  renderGames();
+}
+
 function showScreen(name) {
   ['main','game','result'].forEach(function(n) {
     document.getElementById('screen-' + n).classList.toggle('active', n === name);
+    var tab = document.getElementById('tab-' + n);
+    if (tab) tab.classList.toggle('active', n === name);
   });
+  // ゲーム画面ボタン状態を同期（startBtnはonSettingChangeで管理するので除外）
+  var _ab = document.getElementById('addGameBtn');
+  var _eb = document.getElementById('endGameBtn');
+  if (_ab) _ab.disabled = isFinished;
+  if (_eb) _eb.disabled = isFinished;
+}
+function enableTab(name) {
+  var tab = document.getElementById('tab-' + name);
+  if (tab) tab.disabled = false;
 }
 
 function resetAll() {
-  playerCount = 0; gameCount = 0; noNameMode = false; players = []; games = []; pairHistory = {};
+  playerCount = 0; gameCount = 0; noNameMode = false; players = []; games = []; pairHistory = {}; isFinished = false;
+  document.body.classList.remove('finished');
   document.getElementById('playerCountInput').value = '';
   document.getElementById('gameCountInput').value = '';
   document.getElementById('noNameChk').checked = false;
   document.getElementById('nameCard').style.display = 'none';
   document.getElementById('nameList').innerHTML = '';
   document.getElementById('startBtn').disabled = true;
+  ['game','result'].forEach(function(n) {
+    var tab = document.getElementById('tab-' + n);
+    if (tab) tab.disabled = true;
+  });
   showScreen('main');
 }
 </script>
