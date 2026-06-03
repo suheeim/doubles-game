@@ -469,17 +469,41 @@ var playCount = {};
 function getPlayCount(p) { return playCount[p] || 0; }
 
 function selectFourPlayers(arr) {
-  // 出場回数が少ない順にソートして優先的に選ぶ
+  // 出場回数でグループ分けして、少ない順に4人選ぶ
+  // 同じ回数のグループ内はランダム
   var sorted = arr.slice().sort(function(a, b) {
-    return getPlayCount(a) - getPlayCount(b);
+    var diff = getPlayCount(a) - getPlayCount(b);
+    return diff !== 0 ? diff : Math.random() - 0.5;
   });
-  // 上位から均等になるよう選択（同回数内はランダム）
-  var minCount = getPlayCount(sorted[0]);
-  var candidates = sorted.filter(function(p) { return getPlayCount(p) <= minCount + 1; });
-  if (candidates.length < 4) candidates = sorted;
-  // candidatesからランダムに4人選ぶ
-  var shuffled = shuffle(candidates);
-  return shuffled.slice(0, 4).concat(arr.filter(function(p) { return shuffled.slice(0,4).indexOf(p) === -1; }));
+  // 最小回数のグループと次のグループを分けて処理
+  var groups = [];
+  var current = [];
+  var currentCount = -1;
+  sorted.forEach(function(p) {
+    var cnt = getPlayCount(p);
+    if (cnt !== currentCount) {
+      if (current.length > 0) groups.push(shuffle(current));
+      current = [p];
+      currentCount = cnt;
+    } else {
+      current.push(p);
+    }
+  });
+  if (current.length > 0) groups.push(shuffle(current));
+  // グループを順に取り出して4人になるまで選ぶ
+  var selected = [];
+  for (var gi = 0; gi < groups.length && selected.length < 4; gi++) {
+    var need = 4 - selected.length;
+    var grp = groups[gi];
+    if (grp.length <= need) {
+      selected = selected.concat(grp);
+    } else {
+      // グループから必要な人数だけランダムに選ぶ
+      selected = selected.concat(grp.slice(0, need));
+    }
+  }
+  var rest = arr.filter(function(p) { return selected.indexOf(p) === -1; });
+  return selected.concat(rest);
 }
 
 function shuffleWithPairAvoidance(arr) {
