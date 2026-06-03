@@ -753,6 +753,7 @@ function resetAll() {
   document.getElementById('noNameChk').checked = false;
   document.getElementById('nameCard').style.display = 'none';
   document.getElementById('nameList').innerHTML = '';
+  document.getElementById('gamesPerPersonCard').style.display = 'none';
   document.getElementById('startBtn').disabled = true;
   ['game','result'].forEach(function(n) {
     var tab = document.getElementById('tab-' + n);
