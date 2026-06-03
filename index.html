@@ -512,9 +512,11 @@ function startGame() {
     var k2 = getPairKey(teamB[0], teamB[1]);
     pairHistory[k1] = (pairHistory[k1] || 0) + 1;
     pairHistory[k2] = (pairHistory[k2] || 0) + 1;
-    // 出場回数を記録
+    // 出場回数を記録（先に更新してスナップショット保存）
     teamA.concat(teamB).forEach(function(p) { playCount[p] = (playCount[p] || 0) + 1; });
-    games.push({ id: g, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
+    var snapCount = {};
+    teamA.concat(teamB).forEach(function(p) { snapCount[p] = playCount[p]; });
+    games.push({ id: g, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null, snapCount: snapCount });
   }
 
   renderGames();
@@ -549,11 +551,18 @@ function renderGames() {
     var winIconA = g.winner === 'A' ? ' 🏆' : '';
     var winIconB = g.winner === 'B' ? ' 🏆' : '';
 
+    function pnameWithCount(name, snap) {
+      var cnt = snap ? (snap[name] || '') : '';
+      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#aaa;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
+    }
+    var snap = g.snapCount || {};
+    var winLblA = g.winner === 'A' ? ' 🏆' : '';
+    var winLblB = g.winner === 'B' ? ' 🏆' : '';
     var body = '<div class="game-body">'
       + '<div class="vs-grid">'
-      + '<div class="' + teamAClass + '"><div class="team-lbl">TEAM A' + winIconA + '</div><div class="pname">' + g.teamA[0] + '</div><div class="pname">' + g.teamA[1] + '</div></div>'
+      + '<div class="' + teamAClass + '">' + (winLblA ? '<div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">🏆</div>' : '') + pnameWithCount(g.teamA[0], snap) + pnameWithCount(g.teamA[1], snap) + '</div>'
       + '<div class="vs-text">VS</div>'
-      + '<div class="' + teamBClass + '"><div class="team-lbl">TEAM B' + winIconB + '</div><div class="pname">' + g.teamB[0] + '</div><div class="pname">' + g.teamB[1] + '</div></div>'
+      + '<div class="' + teamBClass + '">' + (winLblB ? '<div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">🏆</div>' : '') + pnameWithCount(g.teamB[0], snap) + pnameWithCount(g.teamB[1], snap) + '</div>'
       + '</div>';
 
 
@@ -687,8 +696,10 @@ function addGame() {
   pairHistory[k1] = (pairHistory[k1] || 0) + 1;
   pairHistory[k2] = (pairHistory[k2] || 0) + 1;
   teamA.concat(teamB).forEach(function(p) { playCount[p] = (playCount[p] || 0) + 1; });
+  var snapCount2 = {};
+  teamA.concat(teamB).forEach(function(p) { snapCount2[p] = playCount[p]; });
   var idx = games.length;
-  games.push({ id: idx, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
+  games.push({ id: idx, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null, snapCount: snapCount2 });
   renderGames();
 }
 
