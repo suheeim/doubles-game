@@ -19,7 +19,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { overflow-x: hidden; }
 body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
-.header { background: var(--green); color: #fff; padding: 48px 20px 18px; }
+.header { background: var(--green); color: #fff; padding: 48px 20px 18px; overflow: visible; position: sticky; top: 0; z-index: 100; }
 .header h1 { font-size: 20px; font-weight: 700; }
 .header p { font-size: 13px; opacity: .8; margin-top: 2px; }
 .screen { display: none; padding: 16px; }
@@ -90,7 +90,6 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
 .tab-bar { display: flex; background: var(--surface); border-bottom: 2px solid var(--border); }
 .tab-btn { flex: 1; padding: 12px 4px 10px; border: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 700; color: var(--text3); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color .15s, border-color .15s; }
-.tab-btn .tab-icon { font-size: 18px; }
 .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
 .tab-btn:disabled { opacity: .35; cursor: not-allowed; }
 body.finished #addGameBtn,
@@ -105,53 +104,66 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
 
 <div class="header" style="display:flex;align-items:center;justify-content:space-between;">
   <div>
-    <h1>🎾 ダブルスゲーム</h1>
-    <p>ゲーム組み合わせ＆スコア管理</p>
+    <h1 id="t-app-name">🎾 ダブルスゲーム</h1>
+    
   </div>
-  <button id="resetBtn" onclick="resetAll()" style="background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.5);border-radius:50%;width:38px;height:38px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="リセット">🔄</button>
+  <div style="display:flex;flex-direction:row;align-items:center;gap:6px">
+    <button id="resetBtn" onclick="resetAll()" style="background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.5);border-radius:50%;width:38px;height:38px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="リセット">🔄</button>
+    <div style="position:relative">
+      <button id="langBtn" onclick="toggleLangMenu()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:6px;padding:4px 6px;font-size:20px;cursor:pointer;line-height:1;width:40px;text-align:center">🇯🇵</button>
+      <div id="langMenu" style="display:none;position:absolute;right:0;top:44px;background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.18);z-index:9999;min-width:56px">
+        <div onclick="selectLang('ja')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇯🇵</div>
+        <div onclick="selectLang('en')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇺🇸</div>
+        <div onclick="selectLang('kr')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center">🇰🇷</div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="tab-bar">
-  <button class="tab-btn active" id="tab-main" onclick="showScreen('main')"><span class="tab-icon">⚙️</span>設定</button>
-  <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled><span class="tab-icon">🎾</span>ゲーム</button>
-  <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled><span class="tab-icon">🏆</span>結果</button>
+  <button class="tab-btn active" id="tab-main" onclick="showScreen('main')"><span id="t-tab-main">設定</span></button>
+  <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled><span id="t-tab-game">ゲーム</span></button>
+  <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled><span id="t-tab-result">結果</span></button>
 </div>
 
 <!-- メイン画面 -->
 <div id="screen-main" class="screen active">
   <label class="check-row">
     <input type="checkbox" id="noNameChk" onchange="onNoNameChange()">
-    <span style="font-size:15px;font-weight:500">名前入力不要（番号のみ）</span>
-    <span style="font-size:12px;color:var(--text3);margin-left:auto">番号で進行</span>
+    <span id="t-no-name-label" style="font-size:15px;font-weight:500">名前入力不要（番号が名前になる）</span>
+    <span id="t-no-name-sub" style="font-size:12px;color:var(--text3);margin-left:auto">番号で進行</span>
   </label>
 
   <div class="card">
-    <div class="step-title"><span class="step-num">1</span>参加者数を入力</div>
+    <div class="step-title"><span class="step-num">1</span><span id="t-step1-title">参加者数を入力</span></div>
     <div class="input-row">
       <input id="playerCountInput" type="number" inputmode="numeric" placeholder="例: 7" min="4" max="20"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
-      <span>人</span>
+      <span id="t-step1-unit">人</span>
       <button class="mic-btn" id="micPlayer" type="button" onclick="startVoiceCount('playerCountInput', 'micPlayer', 4, 20, onSettingChange)">🎤</button>
     </div>
     <div id="countError" style="font-size:12px;color:var(--amber);display:none;margin-top:4px"></div>
   </div>
 
   <div class="card">
-    <div class="step-title"><span class="step-num">2</span>ゲーム回数を入力</div>
+    <div class="step-title"><span class="step-num">2</span><span id="t-step2-title">ゲーム回数を入力</span></div>
     <div class="input-row">
       <input id="gameCountInput" type="number" inputmode="numeric" placeholder="例: 5" min="1" max="30"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
-      <span>回</span>
+      <span id="t-step2-unit">回</span>
       <button class="mic-btn" id="micGame" type="button" onclick="startVoiceCount('gameCountInput', 'micGame', 1, 30, onSettingChange)">🎤</button>
     </div>
   </div>
+  <div id="gamesPerPersonCard" style="display:none;background:var(--green-light);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:13px;font-weight:700;color:var(--green-dark)" id="gamesPerPersonCard">
+    <span id="t-games-per-person"></span>
+  </div>
 
   <div class="card" id="nameCard" style="display:none">
-    <div class="step-title"><span class="step-num">3</span>名前を入力（省略可）</div>
+    <div class="step-title"><span class="step-num">3</span><span id="t-step3-title">名前を入力（省略可）</span></div>
     <div class="name-list" id="nameList"></div>
   </div>
 
   <button class="btn-primary" id="startBtn" onclick="startGame()" disabled>
-    🎾 ゲーム組み合わせ作成
+    <span id="t-start-btn">ゲーム組み合わせ作成</span>
   </button>
 </div>
 
@@ -159,27 +171,125 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
 <div id="screen-game" class="screen">
   <div id="gameList"></div>
   <div id="gameBtns">
-    <button class="btn-secondary" id="addGameBtn" onclick="addGame()">＋ ゲームを追加</button>
-    <button class="btn-danger" id="endGameBtn" onclick="showResult()">🏆 ゲーム終了・結果へ</button>
+    <button class="btn-secondary" id="addGameBtn" onclick="addGame()"><span id="t-add-game-btn">＋ ゲームを追加</span></button>
+    <button class="btn-danger" id="endGameBtn" onclick="showResult()"><span id="t-end-game-btn">🏆 ゲーム終了・結果へ</span></button>
   </div>
 </div>
 
 <!-- 結果画面 -->
 <div id="screen-result" class="screen">
   <div class="card">
-    <div class="label">🏆 個人ランキング（勝利数）</div>
+    <div class="label" id="t-rank-title">🏆 個人ランキング（勝利数）</div>
     <div id="rankList"></div>
   </div>
-  <button class="btn-primary" onclick="resetAll()">🔄 最初からやり直す</button>
+  <button class="btn-primary" onclick="resetAll()"><span id="t-reset-btn">🔄 最初からやり直す</span></button>
 </div>
 
 <script>
+
+var currentLang = 'ja';
+var i18n = {};
+
+function toggleLangMenu() {
+  var menu = document.getElementById('langMenu');
+  if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectLang(lang) {
+  var menu = document.getElementById('langMenu');
+  if (menu) menu.style.display = 'none';
+  setLang(lang);
+}
+
+document.addEventListener('click', function(e) {
+  var btn = document.getElementById('langBtn');
+  var menu = document.getElementById('langMenu');
+  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('score_game_lang', lang);
+  var icons = {'ja':'🇯🇵','en':'🇺🇸','kr':'🇰🇷'};
+  var langBtn = document.getElementById('langBtn');
+  if (langBtn) langBtn.textContent = icons[lang] || '🇯🇵';
+  loadI18n(lang, applyI18n);
+}
+
+function loadI18n(lang, callback) {
+  var file = lang === 'ja' ? 'ja' : lang === 'en' ? 'en' : 'kr';
+  fetch(file + '.json?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) { i18n = data; callback(); })
+    .catch(function() { console.warn('Failed to load ' + file + '.json'); });
+}
+
+function t(key) {
+  return (key in i18n) ? i18n[key] : key;
+}
+
+function applyI18n() {
+  document.title = t('app_title');
+  var map = {
+    't-app-name': 'app_name',
+    't-tab-main': 'tab_main',
+    't-tab-game': 'tab_game',
+    't-tab-result': 'tab_result',
+    't-no-name-label': 'no_name_label',
+    't-no-name-sub': 'no_name_sub',
+    't-step1-title': 'step1_title',
+    't-step1-unit': 'step1_unit',
+    't-step2-title': 'step2_title',
+    't-step2-unit': 'step2_unit',
+    't-step3-title': 'step3_title',
+    't-start-btn': 'start_btn',
+    't-add-game-btn': 'add_game_btn',
+    't-end-game-btn': 'end_game_btn',
+    't-rank-title': 'rank_title',
+    't-reset-btn': 'reset_btn',
+  };
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = t(map[id]);
+  });
+  // エラーメッセージ更新
+  var err = document.getElementById('countError');
+  if (err && err.style.display !== 'none') err.textContent = t('step1_err');
+  // placeholder更新
+  var pc = document.getElementById('playerCountInput');
+  if (pc) pc.placeholder = '';
+  var gc = document.getElementById('gameCountInput');
+  if (gc) gc.placeholder = '';
+  // 名前リストのplaceholder更新
+  for (var i = 0; i < playerCount; i++) {
+    var inp = document.getElementById('pname' + i);
+    if (inp) inp.placeholder = '';
+  }
+  // 1人あたりゲーム数の再描画
+  if (playerCount >= 4 && gameCount >= 1) {
+    var gpp2 = (gameCount * 4 / playerCount).toFixed(1);
+    if (gpp2.endsWith('.0')) gpp2 = gpp2.slice(0, -2);
+    var tpl2 = t('games_per_person') || '1人あたりゲーム数：{n}ゲーム';
+    var gppEl = document.getElementById('t-games-per-person');
+    if (gppEl) gppEl.textContent = tpl2.replace('{n}', gpp2);
+  }
+  // renderGamesで使うテキストも再描画
+  if (games.length > 0) renderGames();
+}
+
+window.addEventListener('load', function() {
+  var saved = localStorage.getItem('score_game_lang') || 'ja';
+  setLang(saved);
+});
+
 var playerCount = 0;
 var activeRecognition = null;
 
 function startVoiceCount(inputId, btnId, min, max, callback) {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { alert('音声入力はSafari（iOS）またはChrome（Android）をお試しください。'); return; }
+  if (!SR) { alert(t('voice_not_supported')); return; }
   var btn = document.getElementById(btnId);
   var inp = document.getElementById(inputId);
   if (activeRecognition) { activeRecognition.stop(); activeRecognition = null; return; }
@@ -209,7 +319,7 @@ function startVoiceCount(inputId, btnId, min, max, callback) {
 
 function startVoice(idx) {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { alert('音声入力はSafari（iOS）またはChrome（Android）をお試しください。'); return; }
+  if (!SR) { alert(t('voice_not_supported')); return; }
   var btn = document.getElementById('mic' + idx);
   var inp = document.getElementById('pname' + idx);
   if (activeRecognition) { activeRecognition.stop(); activeRecognition = null; return; }
@@ -275,7 +385,7 @@ function onSettingChange() {
       nameCard.style.display = 'none';
     }
   } else {
-    if (pc > 0) { err.textContent = '4〜20人で入力してください'; err.style.display = 'block'; }
+    if (pc > 0) { err.textContent = t('step1_err'); err.style.display = 'block'; }
     nameCard.style.display = 'none';
     playerCount = 0;
   }
@@ -283,6 +393,19 @@ function onSettingChange() {
   gameCount = gc;
   var ok = playerCount >= 4 && gameCount >= 1;
   startBtn.disabled = !ok;
+
+  // 1人あたりゲーム数を計算して表示
+  var gppCard = document.getElementById('gamesPerPersonCard');
+  if (playerCount >= 4 && gameCount >= 1) {
+    var gpp = (gameCount * 4 / playerCount).toFixed(1);
+    // .0は省略
+    if (gpp.endsWith('.0')) gpp = gpp.slice(0, -2);
+    var tpl = t('games_per_person') || '1人あたりゲーム数：{n}ゲーム';
+    document.getElementById('t-games-per-person').textContent = tpl.replace('{n}', gpp);
+    gppCard.style.display = 'block';
+  } else {
+    gppCard.style.display = 'none';
+  }
 }
 
 function renderNameList() {
@@ -299,7 +422,7 @@ function renderNameList() {
     inp.className = 'name-input';
     inp.id = 'pname' + i;
     inp.type = 'text';
-    inp.placeholder = '選手 ' + (i + 1);
+    inp.placeholder = '';
     inp.maxLength = 12;
     inp.value = existing[i] || '';
     var mic = document.createElement('button');
@@ -389,9 +512,9 @@ function renderGames() {
 
     var headerClass = g.done ? 'done' : (isActive ? 'active' : '');
     var headerIcon = g.done ? '✅' : (isActive ? '🎾' : '⏳');
-    var headerTitle = '第' + (i+1) + 'ゲーム';
+    var headerTitle = t('game_title').replace('{n}', i+1);
     var scoreSum = g.done ? ' ' + g.scoreA + '-' + g.scoreB : '';
-    var winnerLabel = g.done && g.winner ? '（' + (g.winner === 'A' ? 'A勝' : 'B勝') + '）' : (g.done ? '（引分）' : '');
+    var winnerLabel = g.done && g.winner ? '（' + (g.winner === 'A' ? t('win_a') : t('win_b')) + '）' : (g.done ? '（' + t('draw') + '）' : '');
     var collapsed = g.done && !g.expanded && !isFinished;
 
     var header = '<div class="game-header ' + headerClass + '" style="' + (g.done && !isFinished ? 'cursor:pointer' : '') + '">'
@@ -427,7 +550,7 @@ function renderGames() {
         + '<div class="score-vs">-</div>'
         + '<input class="score-input" id="scoreB-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreB + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ')">'
         + '</div>'
-        + '<button class="confirm-btn" id="confirmBtn-' + i + '" onclick="confirmScore(' + i + ')" disabled>✅ 確定</button>'
+        + '<button class="confirm-btn" id="confirmBtn-' + i + '" onclick="confirmScore(' + i + ')" disabled>' + t('confirm_btn') + '</button>'
         + '</div>';
     }
 
@@ -459,7 +582,7 @@ function checkScore(idx) {
 function confirmScore(idx) {
   var sA = document.getElementById('scoreA-' + idx).value;
   var sB = document.getElementById('scoreB-' + idx).value;
-  if (sA === '' || sB === '') { alert('両チームの点数を入力してください'); return; }
+  if (sA === '' || sB === '') { alert(t('score_alert')); return; }
   var a = parseInt(sA), b = parseInt(sB);
   games[idx].scoreA = sA;
   games[idx].scoreB = sB;
@@ -524,10 +647,10 @@ function showResult() {
     html += '<div class="rank-row">'
       + '<div class="rank-num ' + cls + '">' + medal + '</div>'
       + '<div class="rank-name">' + p.name + '</div>'
-      + '<div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + '勝</span><span style="font-size:12px;color:var(--text3);font-weight:400">（' + p.points + '点）</span></div>'
+      + '<div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + t('wins') + '</span><span style="font-size:12px;color:var(--text3);font-weight:400">（' + p.points + t('points_suffix') + '）</span></div>'
       + '</div>';
   });
-  rankList.innerHTML = html || '<div class="empty">まだ結果がありません</div>';
+  rankList.innerHTML = html || '<div class="empty">' + t('no_result') + '</div>';
 
   showScreen('result');
 }
