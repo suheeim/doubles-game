@@ -553,7 +553,7 @@ function renderGames() {
 
     function pnameWithCount(name, snap) {
       var cnt = snap ? (snap[name] || '') : '';
-      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#aaa;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
+      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#333;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
     }
     var snap = g.snapCount || {};
     var winLblA = g.winner === 'A' ? ' 🏆' : '';
