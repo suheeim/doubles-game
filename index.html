@@ -71,7 +71,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .game-header-done { cursor: pointer; }
 
 /* ランキング */
-.rank-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.rank-row { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
 .rank-num { font-size: 18px; font-weight: 700; color: var(--text3); min-width: 32px; }
 .rank-num.gold { color: #F0A500; }
 .rank-num.silver { color: #A0A0A0; }
@@ -701,7 +701,7 @@ function showResult() {
     html += '<div class="rank-row">'
       + '<div class="rank-num ' + cls + '">' + medal + '</div>'
       + '<div class="rank-name">' + p.name + '</div>'
-      + '<div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + t('wins') + '</span><span style="font-size:12px;color:var(--text3);font-weight:400">（' + p.points + t('points_suffix') + '）</span></div>'
+      + '<div style="text-align:right;white-space:nowrap"><span style="font-size:15px;font-weight:700;color:var(--green)">' + p.wins + t('wins') + '</span><span style="font-size:12px;color:var(--text3);font-weight:400">（' + p.points + t('points_suffix') + '）</span></div>'
       + '</div>';
   });
   rankList.innerHTML = html || '<div class="empty">' + t('no_result') + '</div>';
