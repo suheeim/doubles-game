@@ -130,7 +130,7 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
   <label class="check-row">
     <input type="checkbox" id="noNameChk" onchange="onNoNameChange()">
     <span id="t-no-name-label" style="font-size:15px;font-weight:500">名前入力不要（番号が名前になる）</span>
-    <span id="t-no-name-sub" style="font-size:12px;color:var(--text3);margin-left:auto">番号で進行</span>
+    
   </label>
 
   <div class="card">
@@ -257,11 +257,6 @@ function applyI18n() {
   // エラーメッセージ更新
   var err = document.getElementById('countError');
   if (err && err.style.display !== 'none') err.textContent = t('step1_err');
-  // placeholder更新
-  var pc = document.getElementById('playerCountInput');
-  if (pc) pc.placeholder = '';
-  var gc = document.getElementById('gameCountInput');
-  if (gc) gc.placeholder = '';
   // 名前リストのplaceholder更新
   for (var i = 0; i < playerCount; i++) {
     var inp = document.getElementById('pname' + i);
@@ -468,20 +463,44 @@ var pairHistory = {};
 function getPairKey(a, b) { return [a, b].sort().join('|||'); }
 function getPairCount(a, b) { return pairHistory[getPairKey(a, b)] || 0; }
 
+// 各選手の出場回数を管理
+var playCount = {};
+
+function getPlayCount(p) { return playCount[p] || 0; }
+
+function selectFourPlayers(arr) {
+  // 出場回数が少ない順にソートして優先的に選ぶ
+  var sorted = arr.slice().sort(function(a, b) {
+    return getPlayCount(a) - getPlayCount(b);
+  });
+  // 上位から均等になるよう選択（同回数内はランダム）
+  var minCount = getPlayCount(sorted[0]);
+  var candidates = sorted.filter(function(p) { return getPlayCount(p) <= minCount + 1; });
+  if (candidates.length < 4) candidates = sorted;
+  // candidatesからランダムに4人選ぶ
+  var shuffled = shuffle(candidates);
+  return shuffled.slice(0, 4).concat(arr.filter(function(p) { return shuffled.slice(0,4).indexOf(p) === -1; }));
+}
+
 function shuffleWithPairAvoidance(arr) {
   var best = null, bestScore = Infinity;
+  var selected = selectFourPlayers(arr);
+  // 選ばれた4人の中でペア重複を最小化
+  var front4 = selected.slice(0, 4);
+  var rest = selected.slice(4);
   for (var t = 0; t < 100; t++) {
-    var s = shuffle(arr);
+    var s = shuffle(front4);
     var score = getPairCount(s[0], s[1]) + getPairCount(s[2], s[3]);
     if (score < bestScore) { bestScore = score; best = s; if (score === 0) break; }
   }
-  return best;
+  return best.concat(rest);
 }
 
 function startGame() {
   players = getPlayers();
   games = [];
   pairHistory = {};
+  playCount = {};
 
   for (var g = 0; g < gameCount; g++) {
     var shuffled = shuffleWithPairAvoidance(players);
@@ -493,6 +512,8 @@ function startGame() {
     var k2 = getPairKey(teamB[0], teamB[1]);
     pairHistory[k1] = (pairHistory[k1] || 0) + 1;
     pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+    // 出場回数を記録
+    teamA.concat(teamB).forEach(function(p) { playCount[p] = (playCount[p] || 0) + 1; });
     games.push({ id: g, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
   }
 
@@ -665,6 +686,7 @@ function addGame() {
   var k2 = getPairKey(teamB[0], teamB[1]);
   pairHistory[k1] = (pairHistory[k1] || 0) + 1;
   pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+  teamA.concat(teamB).forEach(function(p) { playCount[p] = (playCount[p] || 0) + 1; });
   var idx = games.length;
   games.push({ id: idx, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null });
   renderGames();
@@ -688,7 +710,7 @@ function enableTab(name) {
 }
 
 function resetAll() {
-  playerCount = 0; gameCount = 0; noNameMode = false; players = []; games = []; pairHistory = {}; isFinished = false;
+  playerCount = 0; gameCount = 0; noNameMode = false; players = []; games = []; pairHistory = {}; playCount = {}; isFinished = false;
   document.body.classList.remove('finished');
   document.getElementById('playerCountInput').value = '';
   document.getElementById('gameCountInput').value = '';
