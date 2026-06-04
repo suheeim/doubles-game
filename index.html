@@ -358,32 +358,17 @@ function startVoice(idx) {
     btn.classList.remove('recording'); btn.textContent = '🎤';
     activeRecognition = null;
 
-    // 漢字が含まれている場合はAPIでカタカナ変換
-    if (/[\u4E00-\u9FFF]/.test(best)) {
-      btn.textContent = '⏳';
-      convertToKatakana(best.slice(0, 12), function(result) {
-        inp.value = result;
-        btn.textContent = '🎤';
-        if (idx < playerCount - 1) {
-          setTimeout(function() {
-            var next = document.getElementById('pname' + (idx + 1));
-            if (next) next.focus();
-          }, 150);
-        }
-      });
-    } else {
-      // 漢字なし：カタカナ→ひらがな変換
-      var tt = best.slice(0, 12).replace(/[\u30A1-\u30F6]/g, function(c) {
-        return String.fromCharCode(c.charCodeAt(0) - 0x60);
-      }).replace(/[^\u3041-\u3096a-zA-Z0-9\s]/g, '').trim();
-      if (!tt) tt = best.slice(0, 12);
-      inp.value = tt;
-      if (idx < playerCount - 1) {
-        setTimeout(function() {
-          var next = document.getElementById('pname' + (idx + 1));
-          if (next) next.focus();
-        }, 150);
-      }
+    // カタカナ→ひらがな変換、漢字はそのまま入力
+    var tt = best.slice(0, 12).replace(/[\u30A1-\u30F6]/g, function(c) {
+      return String.fromCharCode(c.charCodeAt(0) - 0x60);
+    }).trim();
+    if (!tt) tt = best.slice(0, 12);
+    inp.value = tt;
+    if (idx < playerCount - 1) {
+      setTimeout(function() {
+        var next = document.getElementById('pname' + (idx + 1));
+        if (next) next.focus();
+      }, 150);
     }
   };
   rec.onerror = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
