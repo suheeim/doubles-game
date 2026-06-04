@@ -312,6 +312,29 @@ function startVoiceCount(inputId, btnId, min, max, callback) {
   rec.start();
 }
 
+function convertToKatakana(text, callback) {
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 50,
+      messages: [{
+        role: 'user',
+        content: '次の日本語をカタカナに変換してください。カタカナのみ返してください（説明不要）: ' + text
+      }]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var result = data.content && data.content[0] ? data.content[0].text.trim() : text;
+    // カタカナ以外を除去
+    result = result.replace(/[^゠-ヿ]/g, '').slice(0, 12);
+    callback(result || text);
+  })
+  .catch(function() { callback(text); });
+}
+
 function startVoice(idx) {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { alert(t('voice_not_supported')); return; }
@@ -326,26 +349,41 @@ function startVoice(idx) {
   btn.classList.add('recording');
   btn.textContent = '🔴';
   rec.onresult = function(e) {
-    // ひらがな・カタカナのみの候補を優先して探す
     var best = null;
     for (var k = 0; k < e.results[0].length; k++) {
       var candidate = e.results[0][k].transcript;
       if (/^[\u3041-\u30FF\s]+$/.test(candidate)) { best = candidate; break; }
     }
     if (!best) best = e.results[0][0].transcript;
-    // カタカナ→ひらがな変換し、それ以外（漢字等）は除去
-    var t = best.slice(0, 12).replace(/[\u30A1-\u30F6]/g, function(c) {
-      return String.fromCharCode(c.charCodeAt(0) - 0x60);
-    }).replace(/[^\u3041-\u3096a-zA-Z0-9\s]/g, '').trim();
-    if (!t) t = best.slice(0, 12);
-    inp.value = t;
     btn.classList.remove('recording'); btn.textContent = '🎤';
     activeRecognition = null;
-    if (idx < playerCount - 1) {
-      setTimeout(function() {
-        var next = document.getElementById('pname' + (idx + 1));
-        if (next) next.focus();
-      }, 150);
+
+    // 漢字が含まれている場合はAPIでカタカナ変換
+    if (/[\u4E00-\u9FFF]/.test(best)) {
+      btn.textContent = '⏳';
+      convertToKatakana(best.slice(0, 12), function(result) {
+        inp.value = result;
+        btn.textContent = '🎤';
+        if (idx < playerCount - 1) {
+          setTimeout(function() {
+            var next = document.getElementById('pname' + (idx + 1));
+            if (next) next.focus();
+          }, 150);
+        }
+      });
+    } else {
+      // 漢字なし：カタカナ→ひらがな変換
+      var tt = best.slice(0, 12).replace(/[\u30A1-\u30F6]/g, function(c) {
+        return String.fromCharCode(c.charCodeAt(0) - 0x60);
+      }).replace(/[^\u3041-\u3096a-zA-Z0-9\s]/g, '').trim();
+      if (!tt) tt = best.slice(0, 12);
+      inp.value = tt;
+      if (idx < playerCount - 1) {
+        setTimeout(function() {
+          var next = document.getElementById('pname' + (idx + 1));
+          if (next) next.focus();
+        }, 150);
+      }
     }
   };
   rec.onerror = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
