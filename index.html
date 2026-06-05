@@ -19,7 +19,9 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { overflow-x: hidden; }
 body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
-.header { background: var(--green); color: #fff; padding: 48px 20px 18px; overflow: visible; position: sticky; top: 0; z-index: 100; }
+.header { background: var(--green); color: #fff; padding: 24px 20px 9px; overflow: visible; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 100; }
+.tab-bar-wrapper { position: fixed; top: var(--header-height, 0px); left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 99; }
+.page-content { padding-top: var(--total-fixed-height, 0px); }
 .header h1 { font-size: 20px; font-weight: 700; }
 .header p { font-size: 13px; opacity: .8; margin-top: 2px; }
 .screen { display: none; padding: 16px; }
@@ -119,12 +121,13 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
     </div>
   </div>
 </div>
-<div class="tab-bar">
+<div class="tab-bar-wrapper"><div class="tab-bar">
   <button class="tab-btn active" id="tab-main" onclick="showScreen('main')"><span id="t-tab-main">設定</span></button>
   <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled><span id="t-tab-game">ゲーム</span></button>
   <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled><span id="t-tab-result">結果</span></button>
-</div>
+</div></div>
 
+<div class="page-content">
 <!-- メイン画面 -->
 <div id="screen-main" class="screen active">
   <label class="check-row">
@@ -184,8 +187,23 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
   </div>
   <button class="btn-primary" onclick="resetAll()"><span id="t-reset-btn">🔄 最初からやり直す</span></button>
 </div>
+</div><!-- /.page-content -->
 
 <script>
+
+// ヘッダー高さをCSS変数に反映
+function updateHeaderHeight() {
+  var h = document.querySelector('.header');
+  var tb = document.querySelector('.tab-bar-wrapper');
+  if (h) {
+    var hh = h.offsetHeight;
+    document.documentElement.style.setProperty('--header-height', hh + 'px');
+    var th = tb ? tb.offsetHeight : 0;
+    document.documentElement.style.setProperty('--total-fixed-height', (hh + th) + 'px');
+  }
+}
+window.addEventListener('load', updateHeaderHeight);
+window.addEventListener('resize', updateHeaderHeight);
 
 var currentLang = 'ja';
 var i18n = {};
