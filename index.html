@@ -602,12 +602,11 @@ function renderGames() {
     var headerClass = g.done ? 'done' : (isActive ? 'active' : '');
     var headerIcon = g.done ? '✅' : (isActive ? '🎾' : '⏳');
     var headerTitle = t('game_title').replace('{n}', i+1);
-    var scoreSum = g.done ? ' ' + g.scoreA + '-' + g.scoreB : '';
-    var winnerLabel = g.done && g.winner ? '（' + (g.winner === 'A' ? t('win_a') : t('win_b')) + '）' : (g.done ? '（' + t('draw') + '）' : '');
+    var scoreSum = '';
     var collapsed = g.done && !g.expanded && !isFinished;
 
     var header = '<div class="game-header ' + headerClass + '" style="' + (g.done && !isFinished ? 'cursor:pointer' : '') + '">'
-      + '<span class="game-title" ' + (g.done && !isFinished ? 'onclick="toggleGame(' + i + ')"' : '') + ' style="flex:1">' + headerIcon + ' ' + headerTitle + (g.done ? scoreSum + winnerLabel : '') + '</span>'
+      + '<span class="game-title" ' + (g.done && !isFinished ? 'onclick="toggleGame(' + i + ')"' : '') + ' style="flex:1">' + headerIcon + ' ' + headerTitle + (g.done ? scoreSum : '') + '</span>'
       + (g.done && !isFinished ? '<button class="edit-btn" onclick="event.stopPropagation();editGame(' + i + ')" style="margin-right:6px;font-size:11px;padding:3px 8px" title="点数変更">✏️</button>' : '')
       + (g.done && !isFinished ? '<span style="font-size:12px" onclick="toggleGame(' + i + ')">' + (collapsed ? '▶' : '▼') + '</span>' : '')
       + '</div>';
