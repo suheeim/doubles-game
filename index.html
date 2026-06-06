@@ -112,6 +112,8 @@ body.finished #gameCountInput { pointer-events: none; border: none; background: 
 body.finished #noNameChk { pointer-events: none; opacity: 0.4; }
 body.finished .mic-btn { display: none; }
 body.finished .input-row { background: transparent; border: none; }
+body.finished .name-input { pointer-events: none; color: #FFFFFF; }
+body.finished .name-row { background: transparent; border-color: #444; pointer-events: none; }
 </style>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -596,6 +598,7 @@ function startGame() {
   renderGames();
   enableTab('game');
   showScreen('game');
+  window.scrollTo(0, 0);
 }
 
 function renderGames() {
@@ -778,6 +781,7 @@ function addGame() {
 }
 
 function showScreen(name) {
+  window.scrollTo(0, 0);
   ['main','game','result'].forEach(function(n) {
     document.getElementById('screen-' + n).classList.toggle('active', n === name);
     var tab = document.getElementById('tab-' + n);
