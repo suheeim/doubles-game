@@ -107,9 +107,14 @@ body.finished #endGameBtn,
 body.finished #startBtn { display: none; }
 body.finished .confirm-btn { display: none; }
 body.finished .edit-btn { display: none; }
+body.finished #playerCountInput,
+body.finished #gameCountInput { pointer-events: none; border: none; background: transparent; color: #FFFFFF; font-weight: 700; }
+body.finished #noNameChk { pointer-events: none; opacity: 0.4; }
+body.finished .mic-btn { display: none; }
+body.finished .input-row { background: transparent; border: none; }
 </style>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
@@ -797,6 +802,10 @@ function resetAll() {
   var eb = document.getElementById('endGameBtn');
   if (ab) ab.style.display = '';
   if (eb) eb.style.display = '';
+  ['playerCountInput','gameCountInput'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.style.pointerEvents = ''; el.style.border = ''; el.style.background = ''; }
+  });
   document.getElementById('playerCountInput').value = '';
   document.getElementById('gameCountInput').value = '';
   document.getElementById('noNameChk').checked = false;
