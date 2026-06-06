@@ -19,9 +19,8 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { overflow-x: hidden; }
 body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
-.header { background: var(--green); color: #fff; padding: 24px 20px 9px; overflow: visible; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 100; }
-.tab-bar-wrapper { position: fixed; top: var(--header-height, 0px); left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 99; }
-.page-content { padding-top: var(--total-fixed-height, 0px); }
+.footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 100; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: center; }
+.page-content { padding-bottom: 70px; padding-top: 0; }
 .header h1 { font-size: 20px; font-weight: 700; }
 .header p { font-size: 13px; opacity: .8; margin-top: 2px; }
 .screen { display: none; padding: 16px; }
@@ -90,10 +89,15 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 }
 .mic-btn.recording { background: #FCEBEB; border-color: #E24B4A; animation: pulse .6s infinite alternate; }
 @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
-.tab-bar { display: flex; background: var(--surface); border-bottom: 2px solid var(--border); }
-.tab-btn { flex: 1; padding: 12px 4px 10px; border: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 700; color: var(--text3); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color .15s, border-color .15s; }
-.tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+.tab-bar { display: flex; flex: 1; }
+.tab-btn { flex: 1; padding: 10px 4px 12px; border: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; font-size: 18px; font-weight: 700; color: var(--text3); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: color .15s; }
+.tab-btn .tab-label { font-size: 10px; font-weight: 500; }
+.tab-btn.active { color: var(--green); }
 .tab-btn:disabled { opacity: .35; cursor: not-allowed; }
+.footer-icon-btn { flex: 1; padding: 10px 4px 12px; border: none; background: transparent; font-size: 22px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text3); }
+.footer-icon-btn .tab-label { font-size: 10px; font-weight: 500; color: var(--text3); }
+#langBtn { position: relative; }
+#langMenu { position: absolute; bottom: 64px; left: 50%; transform: translateX(-50%); background:#fff; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.18); z-index:9999; min-width:56px; display:none; }
 body.finished #addGameBtn,
 body.finished #endGameBtn,
 body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed; }
@@ -104,28 +108,25 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
 </head>
 <body>
 
-<div class="header" style="display:flex;align-items:center;justify-content:space-between;">
-  <div>
-    <h1 id="t-app-name">🎾 ダブルスゲーム</h1>
-    
-  </div>
-  <div style="display:flex;flex-direction:row;align-items:center;gap:6px">
-    <button id="resetBtn" onclick="resetAll()" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif"><span id="t-reset-header">🏠 リセット</span></button>
-    <div style="position:relative">
-      <button id="langBtn" onclick="toggleLangMenu()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:6px;padding:4px 6px;font-size:20px;cursor:pointer;line-height:1;width:40px;text-align:center">🇯🇵</button>
-      <div id="langMenu" style="display:none;position:absolute;right:0;top:44px;background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.18);z-index:9999;min-width:56px">
-        <div onclick="selectLang('ja')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇯🇵</div>
-        <div onclick="selectLang('en')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇺🇸</div>
-        <div onclick="selectLang('kr')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center">🇰🇷</div>
-      </div>
+<div class="footer">
+  <button class="footer-icon-btn" id="resetBtn" onclick="resetAll()">🔄<span class="tab-label" id="t-reset-header">リセット</span></button>
+  <div class="footer-icon-btn" style="position:relative">
+    <div onclick="toggleLangMenu()" id="langBtn" style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer">
+      <span id="langFlag" style="font-size:22px">🇯🇵</span>
+      <span class="tab-label">言語</span>
+    </div>
+    <div id="langMenu">
+      <div onclick="selectLang('ja')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇯🇵</div>
+      <div onclick="selectLang('en')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇺🇸</div>
+      <div onclick="selectLang('kr')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center">🇰🇷</div>
     </div>
   </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-main" onclick="showScreen('main')">⚙️<span class="tab-label" id="t-tab-main">設定</span></button>
+    <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled>🎾<span class="tab-label" id="t-tab-game">ゲーム</span></button>
+    <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled>🏆<span class="tab-label" id="t-tab-result">結果</span></button>
+  </div>
 </div>
-<div class="tab-bar-wrapper"><div class="tab-bar">
-  <button class="tab-btn active" id="tab-main" onclick="showScreen('main')"><span id="t-tab-main">設定</span></button>
-  <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled><span id="t-tab-game">ゲーム</span></button>
-  <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled><span id="t-tab-result">結果</span></button>
-</div></div>
 
 <div class="page-content">
 <!-- メイン画面 -->
@@ -191,19 +192,7 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
 
 <script>
 
-// ヘッダー高さをCSS変数に反映
-function updateHeaderHeight() {
-  var h = document.querySelector('.header');
-  var tb = document.querySelector('.tab-bar-wrapper');
-  if (h) {
-    var hh = h.offsetHeight;
-    document.documentElement.style.setProperty('--header-height', hh + 'px');
-    var th = tb ? tb.offsetHeight : 0;
-    document.documentElement.style.setProperty('--total-fixed-height', (hh + th) + 'px');
-  }
-}
-window.addEventListener('load', updateHeaderHeight);
-window.addEventListener('resize', updateHeaderHeight);
+// フッター高さは固定CSSで対応済み
 
 var currentLang = 'ja';
 var i18n = {};
