@@ -696,6 +696,11 @@ function confirmScore(idx) {
   games[idx].expanded = false;
   games[idx].winner = a > b ? 'A' : (b > a ? 'B' : null);
   renderGames();
+  // 次のゲームのscoreAにフォーカス
+  setTimeout(function() {
+    var nextInput = document.getElementById('scoreA-' + (idx + 1));
+    if (nextInput) nextInput.focus();
+  }, 50);
 }
 
 function toggleGame(idx) {
