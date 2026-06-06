@@ -629,7 +629,10 @@ function renderGames() {
 
     function pnameWithCount(name, snap) {
       var cnt = snap ? (snap[name] || '') : '';
-      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#CCCCCC;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
+      var idx = players.indexOf(name);
+      var num = idx >= 0 ? (idx + 1) : '';
+      var displayName = num ? '<span style="font-size:11px;color:#CCCCCC;margin-right:5px">' + num + '</span>' + name : name;
+      return '<div class="pname">' + displayName + (cnt ? '<span style="font-size:10px;color:#CCCCCC;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
     }
     var snap = g.snapCount || {};
     var winLblA = g.winner === 'A' ? ' 🏆' : '';
