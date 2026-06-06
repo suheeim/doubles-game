@@ -138,7 +138,7 @@ body.finished .name-row { background: transparent; border: none; pointer-events:
 </div>
 <div class="footer">
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-main" onclick="showScreen('main')">⚙️<span class="tab-label" id="t-tab-main">設定</span></button>
+    <button class="tab-btn active" id="tab-main" onclick="showScreen('main')">👥<span class="tab-label" id="t-tab-main">参加者</span></button>
     <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled>🎾<span class="tab-label" id="t-tab-game">ゲーム</span></button>
     <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled>🏆<span class="tab-label" id="t-tab-result">ランキング</span></button>
   </div>
@@ -714,6 +714,8 @@ function editGame(idx) {
 function showResult() {
   isFinished = true;
   document.body.classList.add('finished');
+  var chk = document.getElementById('noNameChk');
+  if (chk) chk.disabled = true;
   // 未完了ゲームを除外
   games = games.filter(function(g) { return g.done; });
   enableTab('result');
@@ -813,6 +815,7 @@ function resetAll() {
   document.getElementById('playerCountInput').value = '';
   document.getElementById('gameCountInput').value = '';
   document.getElementById('noNameChk').checked = false;
+  document.getElementById('noNameChk').disabled = false;
   document.getElementById('nameCard').style.display = 'none';
   document.getElementById('nameList').innerHTML = '';
   document.getElementById('gamesPerPersonCard').style.display = 'none';
