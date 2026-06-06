@@ -42,7 +42,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .name-input { flex: 1; min-width: 0; font-size: 15px; border: none; outline: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; color: #AAAAAA; }
 .btn-primary { width: 100%; padding: 15px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
 .btn-primary:active { background: var(--green-dark); }
-.btn-primary:disabled { opacity: 1; background: #333333; color: #666666; cursor: not-allowed; }
+.btn-primary:disabled { opacity: 1; background: #2A4A35; color: #5B9E6B; cursor: not-allowed; }
 .btn-secondary { width: 100%; padding: 13px; background: var(--surface); color: #FFFFFF; border: 1px solid #444; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 8px; }
 .btn-danger { width: 100%; padding: 15px; background: #E24B4A; color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; }
 
@@ -57,7 +57,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .game-body { padding: 12px; overflow: visible; }
 .vs-grid { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
 .team { background: var(--gray); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
-.team.winner { background: var(--green-light); border: 2px solid var(--green); }
+.team.winner { background: #2A3D2F; border: 2px solid var(--green); }
 .team-lbl { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .08em; margin-bottom: 4px; }
 .pname { font-size: 14px; font-weight: 500; padding: 2px 0; color: #FFFFFF; }
 .vs-text { text-align: center; font-size: 14px; font-weight: 700; color: var(--text3); }
@@ -68,7 +68,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .score-input.done { border: none; background: transparent; color: var(--text2); pointer-events: none; }
 .score-vs { font-size: 14px; font-weight: 700; color: var(--text3); text-align: center; }
 .confirm-btn { width: 100%; padding: 10px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
-.confirm-btn:disabled { opacity: 1; background: #333333; color: #666666; cursor: not-allowed; }
+.confirm-btn:disabled { opacity: 1; background: #2A4A35; color: #5B9E6B; cursor: not-allowed; }
 .edit-btn { padding: 6px 12px; background: var(--surface); color: var(--text3); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
 .game-body-collapsed { display: none; }
 .game-header-done { cursor: pointer; }
@@ -190,10 +190,9 @@ body.finished #startBtn { opacity: .4; pointer-events: none; cursor: not-allowed
 <!-- 結果画面 -->
 <div id="screen-result" class="screen">
   <div class="card">
-    <div class="label" id="t-rank-title">🏆 個人ランキング（勝利数）</div>
+    <div style="font-size:15px;font-weight:700;color:#FFFFFF;margin-bottom:12px;" id="t-rank-title">🏆 個人ランキング（勝利数）</div>
     <div id="rankList"></div>
   </div>
-  <button class="btn-primary" onclick="resetAll()"><span id="t-reset-btn">🔄 最初からやり直す</span></button>
 </div>
 </div><!-- /.page-content -->
 
@@ -620,7 +619,7 @@ function renderGames() {
 
     function pnameWithCount(name, snap) {
       var cnt = snap ? (snap[name] || '') : '';
-      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#333;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
+      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#CCCCCC;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
     }
     var snap = g.snapCount || {};
     var winLblA = g.winner === 'A' ? ' 🏆' : '';
