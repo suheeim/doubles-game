@@ -34,7 +34,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .input-row { display: flex; align-items: center; background: #5A5A5A; border: 1px solid #666; border-radius: var(--radius-sm); padding: 0 12px; gap: 6px; margin-bottom: 8px; }
 .input-row input { flex: 1; font-size: 22px; font-weight: 700; color: #FFFFFF; text-align: center; padding: 10px 0; border: none; outline: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; }
 .input-row span { font-size: 14px; color: var(--text3); }
-.step-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
+.step-num { display: none; }
 .step-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #FFFFFF; }
 .name-list { display: flex; flex-direction: column; gap: 8px; }
 .name-row { display: flex; align-items: center; gap: 8px; background: #5A5A5A; border: 1px solid var(--green); border-radius: var(--radius-sm); padding: 8px 12px; overflow: visible; }
@@ -154,7 +154,7 @@ body.finished .name-row { background: transparent; border: none; pointer-events:
   </label>
 
   <div class="card">
-    <div class="step-title"><span class="step-num">1</span><span id="t-step1-title">参加者数を入力</span></div>
+    <div class="step-title"><svg width="22" height="22" viewBox="0 0 22 22" style="flex-shrink:0;margin-right:6px"><ellipse cx="11" cy="8" rx="7" ry="8" fill="none" stroke="#5B9E6B" stroke-width="2"/><line x1="6" y1="4.5" x2="16" y2="4.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="5" y1="8" x2="17" y2="8" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="6" y1="11.5" x2="16" y2="11.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="8.5" y1="1" x2="8.5" y2="15.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="11" y1="0.5" x2="11" y2="16" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="13.5" y1="1" x2="13.5" y2="15.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><rect x="9.8" y="15.8" width="2.4" height="5.5" rx="1.2" fill="#5B9E6B"/></svg><span id="t-step1-title">参加者数を入力</span></div>
     <div class="input-row">
       <input id="playerCountInput" type="number" inputmode="numeric" placeholder="例: 7" min="4" max="20"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
@@ -165,7 +165,7 @@ body.finished .name-row { background: transparent; border: none; pointer-events:
   </div>
 
   <div class="card">
-    <div class="step-title"><span class="step-num">2</span><span id="t-step2-title">ゲーム回数を入力</span></div>
+    <div class="step-title"><svg width="22" height="22" viewBox="0 0 22 22" style="flex-shrink:0;margin-right:6px"><ellipse cx="11" cy="8" rx="7" ry="8" fill="none" stroke="#5B9E6B" stroke-width="2"/><line x1="6" y1="4.5" x2="16" y2="4.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="5" y1="8" x2="17" y2="8" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="6" y1="11.5" x2="16" y2="11.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="8.5" y1="1" x2="8.5" y2="15.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="11" y1="0.5" x2="11" y2="16" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="13.5" y1="1" x2="13.5" y2="15.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><rect x="9.8" y="15.8" width="2.4" height="5.5" rx="1.2" fill="#5B9E6B"/></svg><span id="t-step2-title">ゲーム回数を入力</span></div>
     <div class="input-row">
       <input id="gameCountInput" type="number" inputmode="numeric" placeholder="例: 5" min="1" max="30"
         oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
@@ -178,7 +178,7 @@ body.finished .name-row { background: transparent; border: none; pointer-events:
   </div>
 
   <div class="card" id="nameCard" style="display:none">
-    <div class="step-title"><span class="step-num">3</span><span id="t-step3-title">名前入力（任意）</span></div>
+    <div class="step-title"><svg width="22" height="22" viewBox="0 0 22 22" style="flex-shrink:0;margin-right:6px"><ellipse cx="11" cy="8" rx="7" ry="8" fill="none" stroke="#5B9E6B" stroke-width="2"/><line x1="6" y1="4.5" x2="16" y2="4.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="5" y1="8" x2="17" y2="8" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="6" y1="11.5" x2="16" y2="11.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="8.5" y1="1" x2="8.5" y2="15.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="11" y1="0.5" x2="11" y2="16" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><line x1="13.5" y1="1" x2="13.5" y2="15.5" stroke="#5B9E6B" stroke-width="1.2" opacity="0.8"/><rect x="9.8" y="15.8" width="2.4" height="5.5" rx="1.2" fill="#5B9E6B"/></svg><span id="t-step3-title">名前入力（任意）</span></div>
     <div class="name-list" id="nameList"></div>
   </div>
 
