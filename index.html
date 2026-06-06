@@ -4,219 +4,220 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" id="meta-app-title" content="Tennis Draw">
-<title id="page-title">Tennis Draw</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta name="apple-mobile-web-app-title" content="ダブルスゲーム">
+<title>ダブルスゲーム</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --green: #CCDD39; --green-dark: #A0AA20; --green-light: #F8FBCC;
-  --amber: #BA7517; --amber-light: #FAEEDA;
-  --bg: #121212; --surface: #1E1E1E; --surface2: #2A2A2A;
-  --border: rgba(255,255,255,0.1); --text: #FFFFFF; --text2: #CCCCCC; --text3: #888888;
+  --green: #5B9E6B; --green-dark: #3A6B47; --green-light: #E8F5EC;
+  --gray: #2A2A2A; --border: rgba(0,0,0,0.1);
+  --text: #FFFFFF; --text2: #CCCCCC; --text3: #888888;
+  --surface: #1E1E1E; --bg: #121212;
   --radius: 14px; --radius-sm: 9px;
+  --amber: #BA7517; --amber-light: #FAEEDA;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { overflow-x: hidden; }
-body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; max-width: 480px; margin: 0 auto; padding-bottom: 20px; }
-.header { background: var(--green); color: #fff; padding: 24px 20px 9px; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 100; overflow: visible; }
-.tab-bar-wrapper { position: fixed; top: var(--header-height, 0px); left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 99; }
-.page-content { padding-top: var(--header-height, 52px); padding-bottom: 70px; }
-.header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.02em; }
-.header p { font-size: 13px; opacity: 0.8; margin-top: 2px; }
-.section { display: none; padding: 16px; }
-.section.active { display: block; }
-.sec-label { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: 0.08em; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-.rank-row { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 4px; padding: 12px 16px; border-bottom: 1px solid #333; }
-.rank-row:last-child { border-bottom: none; }
-.rank-num { font-size: 18px; font-weight: 700; color: #888888; min-width: 32px; }
+body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
+.header { background: transparent; padding: 12px 16px; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 100; display: flex; align-items: center; justify-content: flex-end; }
+.header h1 { font-size: 18px; font-weight: 700; }
+.footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 100; background: #1E1E1E; border-top: 1px solid #333; display: flex; align-items: center; }
+.page-content { padding-bottom: 70px; padding-top: var(--header-height, 52px); }
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 13px; opacity: .8; margin-top: 2px; }
+.screen { display: none; padding: 16px; }
+.screen.active { display: block; }
+.card { background: var(--surface); border: 1px solid var(--green); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; overflow: visible; }
+.label { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: .08em; margin-bottom: 8px; }
+.check-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--green); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; cursor: pointer; color: #FFFFFF; }
+.check-row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--green); flex-shrink: 0; }
+.input-row { display: flex; align-items: center; background: #5A5A5A; border: 1px solid #666; border-radius: var(--radius-sm); padding: 0 12px; gap: 6px; margin-bottom: 8px; }
+.input-row input { flex: 1; font-size: 22px; font-weight: 700; color: #FFFFFF; text-align: center; padding: 10px 0; border: none; outline: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; }
+.input-row span { font-size: 14px; color: var(--text3); }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
+.step-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #FFFFFF; }
+.name-list { display: flex; flex-direction: column; gap: 8px; }
+.name-row { display: flex; align-items: center; gap: 8px; background: #5A5A5A; border: 1px solid var(--green); border-radius: var(--radius-sm); padding: 8px 12px; overflow: visible; }
+.name-num { width: 26px; height: 26px; border-radius: 50%; background: #3A3A3A; color: #CCCCCC; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.name-input { flex: 1; min-width: 0; font-size: 15px; border: none; outline: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; color: #FFFFFF; }
+.btn-primary { width: 100%; padding: 15px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
+.btn-primary:active { background: var(--green-dark); }
+.btn-primary:disabled { opacity: 1; background: #2A4A35; color: #5B9E6B; cursor: not-allowed; }
+.btn-secondary { width: 100%; padding: 13px; background: var(--surface); color: #FFFFFF; border: 1px solid #444; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 8px; }
+.btn-danger { width: 100%; padding: 15px; background: #E24B4A; color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; }
+
+/* ゲームカード */
+.game-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; transition: all .3s; }
+.game-card.active { border-color: var(--green); }
+.game-card.done { border-color: #444; background: #1A1A1A; }
+.game-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--gray); color: #FFFFFF; }
+.game-header.active { background: var(--green); color: #fff; }
+.game-header.done { background: #2A2A2A; color: var(--text3); }
+.game-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.game-body { padding: 12px; overflow: visible; }
+.vs-grid { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
+.team { background: var(--gray); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+.team.winner { background: var(--gray); border: 2px solid var(--green); }
+.team-lbl { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .08em; margin-bottom: 4px; }
+.pname { font-size: 14px; font-weight: 500; padding: 2px 0; color: #FFFFFF; }
+.vs-text { text-align: center; font-size: 14px; font-weight: 700; color: var(--text3); }
+.score-row { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.score-inputs { display: flex; align-items: center; gap: 8px; width: 100%; }
+.score-input { flex: 1; min-width: 0; text-align: center; font-size: 20px; font-weight: 700; padding: 8px; border: 1px solid #666; border-radius: var(--radius-sm); background: #5A5A5A; color: #FFFFFF; font-family: 'Noto Sans JP', sans-serif; outline: none; }
+.score-input:focus { border-color: var(--green); }
+.score-input.done { border: none; background: transparent; color: var(--text2); pointer-events: none; }
+.score-vs { font-size: 14px; font-weight: 700; color: var(--text3); text-align: center; }
+.confirm-btn { width: 100%; padding: 10px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+.confirm-btn:disabled { opacity: 1; background: #2A4A35; color: #5B9E6B; cursor: not-allowed; }
+.edit-btn { padding: 6px 12px; background: var(--surface); color: var(--text3); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+.game-body-collapsed { display: none; }
+.game-header-done { cursor: pointer; }
+
+/* ランキング */
+.rank-row { display: grid; grid-template-columns: 36px 1fr auto auto; align-items: center; gap: 4px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.rank-num { font-size: 18px; font-weight: 700; color: var(--text3); min-width: 32px; }
 .rank-num.gold { color: #F0A500; }
 .rank-num.silver { color: #A0A0A0; }
 .rank-num.bronze { color: #C07020; }
-.rank-name-hist { flex: 1; font-size: 15px; font-weight: 500; color: #FFFFFF; }
-.rank-detail { font-size: 12px; color: #888888; margin-top: 2px; }
-.rank-count { font-size: 16px; font-weight: 700; color: var(--green); }
-.sec-label button { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
-.check-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--green); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; cursor: pointer; color: #FFFFFF; }
-.check-row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
-.step-card { background: var(--surface); border: 1px solid var(--green); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; }
-.step-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
-.step-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 14px; }
-.name-list { display: flex; flex-direction: column; gap: 8px; }
-.name-row { display: flex; align-items: center; gap: 8px; background: #3D3D3D; border: 1px solid var(--green); border-radius: var(--radius-sm); padding: 8px 8px 8px 12px; }
-.name-num { width: 26px; height: 26px; border-radius: 50%; background: #3A3A3A; color: #CCCCCC; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.name-input { flex: 1; min-width: 0; font-size: 15px; border: none; outline: none; background: transparent; color: #FFFFFF; font-family: 'Noto Sans JP', sans-serif; }
-.name-input::placeholder { color: var(--text3); }
-.mic-btn { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; transition: background .15s; }
-.mic-btn.recording { background: #FCEBEB; color: #E24B4A; animation: pulse .6s infinite alternate; }
+.rank-name { flex: 1; font-size: 15px; font-weight: 500; color: #FFFFFF; }
+.rank-wins { font-size: 16px; font-weight: 700; color: var(--green); }
+.empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
+.warn { background: var(--amber-light); color: var(--amber); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; margin-top: 8px; }
+.mic-btn {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gray); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 15px; transition: background .15s;
+}
+.mic-btn.recording { background: #FCEBEB; border-color: #E24B4A; animation: pulse .6s infinite alternate; }
 @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
-.btn-primary { width: 100%; padding: 15px; background: var(--green); color: #1a1a1a; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .15s; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-primary:active { background: var(--green-dark); }
-.btn-primary:disabled { background: #4A4A20; color: #CCDD39; cursor: not-allowed; }
-.serve-btn { width: 100%; padding: 13px; background: var(--surface); color: #FFFFFF; border: 1px solid #444; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 8px; transition: background .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.serve-btn.active { background: #FAEEDA; border-color: #BA7517; color: #BA7517; }
-.court-card { background: var(--surface); border-radius: var(--radius); border: 1px solid #CCDD39; margin-bottom: 10px; overflow: hidden; animation: fadeUp .3s ease both; }
-@keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
-.court-top { background: var(--green); color: #1a1a1a; padding: 8px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-.court-body { padding: 12px; }
-.vs-grid { display: grid; grid-template-columns: 1fr 32px 1fr; gap: 6px; align-items: center; }
-.team { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
-.team-lbl { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .08em; margin-bottom: 6px; }
-.pname { font-size: 14px; font-weight: 500; padding: 2px 0; color: #FFFFFF; }
-.pname.server { color: #FFFFFF; font-weight: 700; }
-.vs-text { text-align: center; font-size: 14px; font-weight: 700; color: var(--text3); }
-.leftover-card { background: var(--surface); border: 1px dashed #444; border-radius: var(--radius); padding: 12px; margin-bottom: 10px; text-align: center; }
-.leftover-lbl { font-size: 11px; font-weight: 700; color: #FFFFFF; letter-spacing: .08em; margin-bottom: 8px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.chip { display: inline-flex; align-items: center; gap: 4px; background: var(--surface2); border: 1px solid #444; border-radius: 20px; padding: 4px 10px; font-size: 13px; color: #FFFFFF; }
-.warn { background: var(--amber-light); color: var(--amber); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 14px; margin-top: 8px; }
-.history-line { font-size: 13px; color: var(--text2); padding: 2px 0; }
-.history-card { background: var(--surface); border: 1px solid var(--green); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; }
-.history-card-header { background: var(--green); color: #fff; padding: 8px 14px; font-size: 13px; font-weight: 700; }
-.history-card-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #333; }
-.history-card-row:last-child { border-bottom: none; }
-.history-round-badge { font-size: 11px; font-weight: 700; color: var(--green); white-space: nowrap; min-width: 48px; }
-.history-names { flex: 1; font-size: 14px; color: #FFFFFF; }
-.history-vs { font-size: 12px; font-weight: 700; color: #888888; margin: 0 4px; }
-.empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; line-height: 1.8; }
-.empty-icon { font-size: 40px; margin-bottom: 10px; }
-/* タブバー */
-.tab-bar { display: flex; }
-.tab-btn { flex: 1; padding: 10px 4px 12px; border: none; background: transparent; font-size: 20px; font-weight: 700; color: #888888; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: color .15s; filter: grayscale(1) brightness(0.7); font-family: 'Noto Sans JP', sans-serif; }
-.tab-btn .tab-label-txt { font-size: 10px; font-weight: 500; color: #888888; }
+.tab-bar { display: flex; flex: 1; }
+.tab-btn { flex: 1; padding: 10px 4px 12px; border: none; background: transparent; font-family: 'Noto Sans JP', sans-serif; font-size: 18px; font-weight: 700; color: #888888; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: color .15s; filter: grayscale(1) brightness(0.7); }
+.tab-btn .tab-label { font-size: 10px; font-weight: 500; color: #FFFFFF; }
 .tab-btn.active { color: var(--green); filter: none; }
-.tab-btn.active .tab-label-txt { color: var(--green); }
-.tab-btn:disabled { opacity: 1; color: #444444; filter: grayscale(1) brightness(0.5); cursor: not-allowed; }
-.tab-btn:disabled .tab-label-txt { color: #444444; }
-/* 言語ボタン */
-.lang-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .15s; }
-.lang-btn.active { background: rgba(255,255,255,0.35); }
+.tab-btn.active .tab-label { color: var(--green); }
+.tab-btn:disabled { opacity: 1; color: #555555; cursor: not-allowed; filter: grayscale(1) brightness(0.5); }
+.tab-btn:disabled .tab-label { color: #555555; }
+.footer-icon-btn { flex: 1; padding: 10px 4px 12px; border: none; background: transparent; font-size: 22px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text3); }
+.footer-icon-btn .tab-label { font-size: 10px; font-weight: 500; color: #FFFFFF; }
+#langBtn { position: relative; }
+#langMenu { position: absolute; top: 44px; right: 0; background:#fff; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.18); z-index:9999; min-width:56px; display:none; }
+body.finished #addGameBtn,
+body.finished #endGameBtn,
+body.finished #startBtn { display: none; }
+body.finished .confirm-btn { display: none; }
+body.finished .edit-btn { display: none; }
+body.finished #playerCountInput,
+body.finished #gameCountInput { pointer-events: none; border: none; background: transparent; color: #FFFFFF; font-weight: 700; }
+body.finished #noNameChk { pointer-events: none; opacity: 0.4; }
+body.finished .mic-btn { display: none; }
+body.finished .input-row { background: transparent; border: none; }
+body.finished .name-input { pointer-events: none; color: #FFFFFF; }
+body.finished .name-row { background: transparent; border: none; pointer-events: none; }
 </style>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 
-<div class="header" style="background:transparent;display:flex;align-items:center;justify-content:flex-end;padding:12px 16px;">
+<div class="header">
   <div style="display:flex;align-items:center;gap:12px">
     <button id="resetBtn" onclick="resetAll()" style="background:none;border:none;color:var(--green);font-size:22px;cursor:pointer;padding:4px;line-height:1">🔄</button>
     <div style="position:relative">
       <div onclick="toggleLangMenu()" id="langBtn" style="cursor:pointer;font-size:22px;line-height:1">
         <span id="langFlag">🇯🇵</span>
       </div>
-      <div id="langMenu" style="display:none;position:absolute;top:36px;right:0;background:#1E1E1E;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.5);z-index:9999;min-width:56px">
-        <div onclick="selectLang('ja')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #333">🇯🇵</div>
-        <div onclick="selectLang('en')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #333">🇺🇸</div>
+      <div id="langMenu">
+        <div onclick="selectLang('ja')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇯🇵</div>
+        <div onclick="selectLang('en')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center;border-bottom:1px solid #f0f0f0">🇺🇸</div>
         <div onclick="selectLang('kr')" style="padding:10px 14px;font-size:20px;cursor:pointer;text-align:center">🇰🇷</div>
       </div>
     </div>
   </div>
 </div>
-
-<div class="footer" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100;background:#1E1E1E;border-top:1px solid #333;display:flex;align-items:center;">
-  <div class="tab-bar" style="flex:1;display:flex;">
-    <button class="tab-btn active" id="tab-players" onclick="switchTab('players')" id-t="tab_players"><span class="tab-icon">👥</span><span class="tab-label-txt" id="tl-tab-players">参加者</span></button>
-    <button class="tab-btn" id="tab-draw" onclick="switchTab('draw')" disabled id-t="tab_draw"><span class="tab-icon">🎾</span><span class="tab-label-txt" id="tl-tab-draw">ゲーム</span></button>
-    <button class="tab-btn" id="tab-history" onclick="switchTab('history')" disabled id-t="tab_history"><span class="tab-icon">📋</span><span class="tab-label-txt" id="tl-tab-history">履歴</span></button>
+<div class="footer">
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-main" onclick="showScreen('main')"><span class="tab-icon">👥</span><span class="tab-label" id="t-tab-main">参加者</span></button>
+    <button class="tab-btn" id="tab-game" onclick="showScreen('game');if(games.length)renderGames();" disabled><span class="tab-icon">🎾</span><span class="tab-label" id="t-tab-game">ゲーム</span></button>
+    <button class="tab-btn" id="tab-result" onclick="showScreen('result')" disabled><span class="tab-icon">🏆</span><span class="tab-label" id="t-tab-result">ランキング</span></button>
   </div>
 </div>
 
 <div class="page-content">
-<!-- 参加者タブ -->
-<div id="sec-players" class="section active">
+<!-- メイン画面 -->
+<div id="screen-main" class="screen active">
   <label class="check-row">
     <input type="checkbox" id="noNameChk" onchange="onNoNameChange()">
-    <span id="t-no-name-label" style="font-size:15px;font-weight:500;color:var(--text)">No names</span>
-    <span id="t-no-name-sub" style="font-size:12px;color:var(--text3);margin-left:auto">Numbers only</span>
+    <span id="t-no-name-label" style="font-size:15px;font-weight:500">名前入力不要（番号が名前になる）</span>
+    
   </label>
-  <div class="step-card">
-    <div class="step-title"><span class="step-num">1</span><span id="t-step1-title">Enter number of players</span></div>
-    <div style="display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;gap:6px">
-      <input id="cntInput" type="number" inputmode="numeric" pattern="[0-9]*" min="4" max="30"
-        style="flex:1;font-size:22px;font-weight:700;color:#FFFFFF;text-align:center;padding:10px 0;border:none;outline:none;background:transparent;font-family:'Noto Sans JP',sans-serif"
-        oninput="this.value=this.value.replace(/[^0-9]/g,'');onCountInput()"
-        onkeydown="if(event.key==='Enter')confirmCount()">
-      <span id="t-step1-unit" style="font-size:14px;color:var(--text3)">ppl</span>
-      <button class="mic-btn" id="micCount" onclick="startVoiceCount()" title="Voice input">🎤</button>
+
+  <div class="card">
+    <div class="step-title"><span class="step-num">1</span><span id="t-step1-title">参加者数を入力</span></div>
+    <div class="input-row">
+      <input id="playerCountInput" type="number" inputmode="numeric" placeholder="例: 7" min="4" max="20"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
+      <span id="t-step1-unit">人</span>
+      <button class="mic-btn" id="micPlayer" type="button" onclick="startVoiceCount('playerCountInput', 'micPlayer', 4, 20, onSettingChange)">🎤</button>
     </div>
-    <div id="cntError" style="font-size:12px;color:var(--amber);margin-top:8px;display:none"></div>
+    <div id="countError" style="font-size:12px;color:var(--amber);display:none;margin-top:4px"></div>
   </div>
-  <div class="step-card" id="step2Card" style="display:none">
-    <div class="step-title"><span class="step-num">2</span><span id="t-step2-title">Enter names (optional)</span></div>
+
+  <div class="card">
+    <div class="step-title"><span class="step-num">2</span><span id="t-step2-title">ゲーム回数を入力</span></div>
+    <div class="input-row">
+      <input id="gameCountInput" type="number" inputmode="numeric" placeholder="例: 5" min="1" max="30"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');onSettingChange()">
+      <span id="t-step2-unit">回</span>
+      <button class="mic-btn" id="micGame" type="button" onclick="startVoiceCount('gameCountInput', 'micGame', 1, 30, onSettingChange)">🎤</button>
+    </div>
+  </div>
+  <div id="gamesPerPersonCard" style="display:none;background:var(--green-light);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:13px;font-weight:700;color:var(--green-dark)">
+    <span id="t-games-per-person"></span>
+  </div>
+
+  <div class="card" id="nameCard" style="display:none">
+    <div class="step-title"><span class="step-num">3</span><span id="t-step3-title">名前入力（任意）</span></div>
     <div class="name-list" id="nameList"></div>
   </div>
-  <button id="goDrawBtn" class="btn-primary" onclick="goToDraw()" disabled style="opacity:0.4;cursor:not-allowed">
-    <span>🔀</span><span id="t-go-draw-btn">Start Draw</span>
+
+  <button class="btn-primary" id="startBtn" onclick="startGame()" disabled>
+    <span id="t-start-btn">ゲーム組み合わせ作成</span>
   </button>
-  <div class="step-card" style="margin-top:14px">
-    <div class="step-title"><span id="t-court-fee-title">💴 Court Fee (optional)</span></div>
-    <div style="display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;gap:6px">
-      <input id="costInput" type="text" inputmode="numeric" pattern="[0-9,]*"
-        style="flex:1;font-size:20px;font-weight:700;color:#FFFFFF;text-align:center;padding:10px 0;border:none;outline:none;background:transparent;font-family:'Noto Sans JP',sans-serif;min-width:0"
-        oninput="formatCostInput(this);updateCostBtn()">
-      <span id="t-court-fee-unit" style="font-size:14px;color:var(--text3);flex-shrink:0;padding-right:4px">JPY</span>
-    </div>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="screen-game" class="screen">
+  <div id="gameList"></div>
+  <div id="gameBtns">
+    <button class="btn-secondary" id="addGameBtn" onclick="addGame()"><span id="t-add-game-btn">＋ ゲームを追加</span></button>
+    <button class="btn-danger" id="endGameBtn" onclick="showResult()"><span id="t-end-game-btn">🏆 ゲーム終了・結果へ</span></button>
   </div>
 </div>
 
-<!-- 抽選タブ -->
-<div id="sec-draw" class="section">
-
-  <!-- 現在の結果（フル幅） -->
-  <div id="drawResult">
-    <div class="empty"><div class="empty-icon">🎾</div><span id="t-draw-empty">Set players and press "Start Draw"</span></div>
+<!-- 結果画面 -->
+<div id="screen-result" class="screen">
+  <div class="card">
+    <div style="font-size:15px;font-weight:700;color:#FFFFFF;margin-bottom:12px;" id="t-rank-title">🏆 個人ランキング（勝利数）</div>
+    <div id="rankList"></div>
   </div>
-  <!-- 以前・予定（2カラム） -->
-  <div id="prevNextArea" style="display:none;margin-top:12px">
-    <div id="nextResult">
-      <div style="font-size:11px;font-weight:700;color:#FFFFFF;letter-spacing:.08em;margin-bottom:6px"><span id="t-next-round-label">🔮 Next</span></div>
-      <div id="nextResultBody"></div>
-    </div>
-  </div>
-  <button class="btn-primary" onclick="doDraw(false)"><span>🔀</span><span id="t-redraw-btn">Redraw</span></button>
-  <button class="serve-btn" id="serveBtn" onclick="toggleServe()"><span id="t-serve-btn">🎾 Auto decide serve</span></button>
-  <button class="serve-btn" onclick="showCostResult()" id="costBtn" disabled style="opacity:0.4;cursor:not-allowed"><span id="t-cost-btn">💴 Show Cost per Person</span></button>
-  <div id="costResultDraw" style="display:none;background:#121212;border:2px solid #CCDD39;border-radius:var(--radius-sm);padding:14px;margin-top:8px;text-align:center">
-    <div style="font-size:28px;font-weight:700;color:#CCDD39"><span id="costCurrency">¥</span><span id="perPersonDraw">0</span></div>
-    <div style="font-size:12px;color:#CCDD39;margin-top:2px" id="t-cost-per-person">per person</div>
-    <div id="costTotalDraw" style="font-size:12px;color:#CCDD39;opacity:0.8;margin-top:6px"></div>
-  </div>
-</div>
-
-<!-- 履歴タブ -->
-<div id="sec-history" class="section">
-  <div class="sec-label"><span id="t-history-label">Pair History</span></div>
-  <div id="historyList"></div>
 </div>
 </div><!-- /.page-content -->
 
 <script>
+
 // ヘッダー高さをCSS変数に反映
 function updateHeaderHeight() {
   var h = document.querySelector('.header');
-  if (h) {
-    var hh = h.offsetHeight;
-    document.documentElement.style.setProperty('--header-height', hh + 'px');
-  }
+  if (h) document.documentElement.style.setProperty('--header-height', h.offsetHeight + 'px');
 }
 window.addEventListener('load', updateHeaderHeight);
 window.addEventListener('resize', updateHeaderHeight);
 
-var playerCount = 0;
-var lastDraw = null;
-var drawCount = 0;
-var pairHistory = {};
-var serveHistory = {};
-var gameHistory = [];
-var serveEnabled = false;
-var noNameMode = false;
-var activeRecognition = null;
-var currentLang = 'en';
+var currentLang = 'ja';
 var i18n = {};
 
-// ===== i18n =====
 function toggleLangMenu() {
   var menu = document.getElementById('langMenu');
   if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
@@ -228,7 +229,6 @@ function selectLang(lang) {
   setLang(lang);
 }
 
-// メニュー外タップで閉じる
 document.addEventListener('click', function(e) {
   var btn = document.getElementById('langBtn');
   var menu = document.getElementById('langMenu');
@@ -239,39 +239,19 @@ document.addEventListener('click', function(e) {
 
 function setLang(lang) {
   currentLang = lang;
-  localStorage.setItem('tennis_draw_lang', lang);
-  document.documentElement.lang = lang === 'ja' ? 'ja' : lang === 'kr' ? 'ko' : 'en';
-  // アイコン即時更新
-  var _icons = {'ja':'🇯🇵','en':'🇺🇸','kr':'🇰🇷'};
-  var _langFlag = document.getElementById('langFlag');
-  if (_langFlag) _langFlag.textContent = _icons[lang] || '🇯🇵';
-  // 言語ボタンのactive状態
-  ['ja','en','kr'].forEach(function(l) {
-    var btn = document.querySelector('.lang-btn[onclick="setLang(\'' + l + '\')"]');
-    if (btn) btn.classList.toggle('active', l === lang);
-  });
-  loadI18n(lang, function() {
-    applyI18n();
-    if (lastDraw) {
-      var players2 = noNameMode
-        ? (function() { var arr = []; for (var i2 = 0; i2 < playerCount; i2++) arr.push(String(i2+1)); return arr; })()
-        : getPlayers();
-      doDraw(true);
-      generateNextPreview(players2, true);
-    }
-    // 履歴画面が表示中なら再描画
-    var secHistory = document.getElementById('sec-history');
-    if (secHistory && secHistory.classList.contains('active')) {
-      renderHistory();
-    }
-  });
+  localStorage.setItem('score_game_lang', lang);
+  var icons = {'ja':'🇯🇵','en':'🇺🇸','kr':'🇰🇷'};
+  var langBtn = document.getElementById('langBtn');
+  if (langBtn) langBtn.textContent = icons[lang] || '🇯🇵';
+  loadI18n(lang, applyI18n);
 }
 
 function loadI18n(lang, callback) {
-  fetch(lang + '.json?v=' + Date.now())
+  var file = lang === 'ja' ? 'ja' : lang === 'en' ? 'en' : 'kr';
+  fetch(file + '.json?v=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(data) { i18n = data; callback(); })
-    .catch(function() { console.warn('Failed to load ' + lang + '.json'); });
+    .catch(function() { console.warn('Failed to load ' + file + '.json'); });
 }
 
 function t(key) {
@@ -279,530 +259,124 @@ function t(key) {
 }
 
 function applyI18n() {
-  // タイトル
   document.title = t('app_title');
-  var metaTitle = document.getElementById('meta-app-title');
-  if (metaTitle) metaTitle.content = t('app_title');
-
-  // data-t属性で一括適用
   var map = {
-    'app_name': 't-app-name',
-    'app_desc': 't-app-desc',
-    'tab_players': 'tl-tab-players',
-    'tab_draw': 'tl-tab-draw',
-    'tab_history': 'tl-tab-history',
-    'no_name_label': 't-no-name-label',
-    'no_name_sub': 't-no-name-sub',
-    'step1_title': 't-step1-title',
-    'step1_unit': 't-step1-unit',
-    'step2_title': 't-step2-title',
-    'go_draw_btn': 't-go-draw-btn',
-    'court_fee_title': 't-court-fee-title',
-    'court_fee_unit': 't-court-fee-unit',
-    'next_round_label': 't-next-round-label',
-    'prev_result_label': 't-prev-result-label',
-    'redraw_btn': 't-redraw-btn',
-    'serve_btn': 't-serve-btn',
-    'cost_btn': 't-cost-btn',
-    'cost_per_person': 't-cost-per-person',
-    'history_label': 't-history-label',
-    'history_label': 't-history-label'
+    't-app-name': 'app_name',
+    't-tab-main': 'tab_main',
+    't-tab-game': 'tab_game',
+    't-tab-result': 'tab_result',
+    't-no-name-label': 'no_name_label',
+    't-no-name-sub': 'no_name_sub',
+    't-step1-title': 'step1_title',
+    't-step1-unit': 'step1_unit',
+    't-step2-title': 'step2_title',
+    't-step2-unit': 'step2_unit',
+    't-step3-title': 'step3_title',
+    't-start-btn': 'start_btn',
+    't-add-game-btn': 'add_game_btn',
+    't-end-game-btn': 'end_game_btn',
+    't-rank-title': 'rank_title',
+    't-reset-btn': 'reset_btn',
+    't-reset-header': 'reset_btn',
   };
-  Object.keys(map).forEach(function(key) {
-    var el = document.getElementById(map[key]);
-    if (el) el.textContent = t(key);
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = t(map[id]);
   });
-
-  // placeholder
-  var cntInput = document.getElementById('cntInput');
-  if (cntInput) cntInput.placeholder = t('step1_placeholder');
-  var costInput = document.getElementById('costInput');
-  if (costInput) costInput.placeholder = t('court_fee_placeholder');
-
-  // draw empty message
-  var drawEmpty = document.querySelector('#drawResult .empty span');
-  if (drawEmpty) drawEmpty.innerHTML = t('draw_empty');
-
-  // 名前リストのplaceholderを更新
+  // エラーメッセージ更新
+  var err = document.getElementById('countError');
+  if (err && err.style.display !== 'none') err.textContent = t('step1_err');
+  // 名前リストのplaceholder更新
   for (var i = 0; i < playerCount; i++) {
-    var inp = document.getElementById('p' + i);
-    if (inp) inp.placeholder = t('player_placeholder');
+    var inp = document.getElementById('pname' + i);
+    if (inp) inp.placeholder = '';
   }
-
-  // 通貨記号更新
-  var currencyEl2 = document.getElementById('costCurrency');
-  if (currencyEl2) currencyEl2.textContent = currentLang === 'kr' ? '' : '¥';
-  // サーブボタン状態を維持
-  var serveBtn = document.getElementById('serveBtn');
-  if (serveBtn) {
-    var sbSpan = document.getElementById('t-serve-btn');
-    if (sbSpan) sbSpan.textContent = serveEnabled ? t('serve_btn_on') : t('serve_btn');
+  // 1人あたりゲーム数の再描画
+  if (playerCount >= 4 && gameCount >= 1) {
+    var gpp2 = (gameCount * 4 / playerCount).toFixed(1);
+    if (gpp2.endsWith('.0')) gpp2 = gpp2.slice(0, -2);
+    var tpl2 = t('games_per_person') || '1人あたりゲーム数：{n}ゲーム';
+    var gppEl = document.getElementById('t-games-per-person');
+    if (gppEl) gppEl.textContent = tpl2.replace('{n}', gpp2);
   }
+  // renderGamesで使うテキストも再描画
+  if (games.length > 0) renderGames();
 }
 
-// ===== 機能 =====
-function formatCostInput(el) {
-  var raw = el.value.replace(/[^0-9]/g, '');
-  if (raw === '') { el.value = ''; return; }
-  el.value = parseInt(raw, 10).toLocaleString();
-}
+window.addEventListener('load', function() {
+  var saved = localStorage.getItem('score_game_lang') || 'ja';
+  setLang(saved);
+});
 
-function getCostValue() {
-  var el = document.getElementById('costInput');
-  if (!el) return 0;
-  return parseInt(el.value.replace(/[^0-9]/g, ''), 10) || 0;
-}
+var playerCount = 0;
+var activeRecognition = null;
 
-function updateCostBtn() {
-  var cost = getCostValue();
-  var btn = document.getElementById('costBtn');
-  if (!btn) return;
-  var ok = cost && cost > 0;
-  btn.disabled = !ok;
-  btn.style.opacity = ok ? '1' : '0.4';
-  btn.style.cursor = ok ? 'pointer' : 'not-allowed';
-  if (!ok) {
-    var costResult = document.getElementById('costResultDraw');
-    if (costResult) costResult.style.display = 'none';
-  }
-}
-
-function onNoNameChange() {
-  noNameMode = document.getElementById('noNameChk').checked;
-  confirmCount();
-}
-
-function onCountInput() {
-  // 入力中はボタン活性化のみ、自動遷移しない
-  var val = parseInt(document.getElementById('cntInput').value);
-  var err = document.getElementById('cntError');
-  err.style.display = 'none';
-  if (!val || val < 4 || val > 30) {
-    var goBtn = document.getElementById('goDrawBtn');
-    goBtn.disabled = true; goBtn.style.opacity = '0.4'; goBtn.style.cursor = 'not-allowed';
-    return;
-  }
-  playerCount = val;
-  if (noNameMode) {
-    // 名前なしモードはボタンを活性化するのみ
-    var goBtn = document.getElementById('goDrawBtn');
-    goBtn.disabled = false; goBtn.style.opacity = '1'; goBtn.style.cursor = 'pointer';
-    document.getElementById('step2Card').style.display = 'none';
-    return;
-  }
-  renderNameList();
-  document.getElementById('step2Card').style.display = 'block';
-  var goBtn = document.getElementById('goDrawBtn');
-  goBtn.disabled = false; goBtn.style.opacity = '1'; goBtn.style.cursor = 'pointer';
-}
-
-function confirmCount() {
-  var val = parseInt(document.getElementById('cntInput').value);
-  var err = document.getElementById('cntError');
-  if (!val || val < 4) {
-    if (document.getElementById('cntInput').value !== '') {
-      err.textContent = t('step1_err_min'); err.style.display = 'block';
-    }
-    return;
-  }
-  if (val > 30) {
-    err.textContent = t('step1_err_max'); err.style.display = 'block'; return;
-  }
-  err.style.display = 'none';
-  playerCount = val;
-  if (noNameMode) {
-    goToDraw();
-    return;
-  }
-  renderNameList();
-  document.getElementById('step2Card').style.display = 'block';
-  var goBtn = document.getElementById('goDrawBtn');
-  goBtn.disabled = false; goBtn.style.opacity = '1'; goBtn.style.cursor = 'pointer';
-  setTimeout(function() {
-    var p0 = document.getElementById('p0');
-    if (p0) p0.focus();
-  }, 100);
-}
-
-function renderNameList() {
-  var list = document.getElementById('nameList');
-  var current = list.querySelectorAll('.name-input');
-  var existing = Array.from(current).map(function(inp) { return inp.value; });
-  list.innerHTML = '';
-  for (var i = 0; i < playerCount; i++) {
-    var saved = existing[i] || '';
-    var row = document.createElement('div');
-    row.className = 'name-row';
-    var num = document.createElement('div');
-    num.className = 'name-num';
-    num.textContent = String(i + 1);
-    var inp = document.createElement('input');
-    inp.className = 'name-input';
-    inp.id = 'p' + i;
-    inp.type = 'text';
-    inp.placeholder = t('player_placeholder');
-    inp.maxLength = 12;
-    inp.value = saved;
-    (function(idx) {
-      inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && idx < playerCount - 1) {
-          var next = document.getElementById('p' + (idx + 1));
-          if (next) next.focus();
-        }
-      });
-    })(i);
-    var mic = document.createElement('button');
-    mic.className = 'mic-btn';
-    mic.id = 'mic' + i;
-    mic.textContent = '🎤';
-    (function(idx) {
-      mic.addEventListener('click', function() { startVoice(idx); });
-    })(i);
-    row.appendChild(num); row.appendChild(inp); row.appendChild(mic);
-    list.appendChild(row);
-  }
-}
-
-function switchTab(name) {
-  ['players','draw','history'].forEach(function(n) {
-    document.getElementById('sec-'+n).classList.toggle('active', n === name);
-    var tab = document.getElementById('tab-'+n);
-    if (tab && !tab.disabled) {
-      tab.classList.toggle('active', n === name);
-    }
-  });
-  var resetBtn = document.getElementById('resetBtn');
-  if (resetBtn) resetBtn.style.display = 'block';
-  if (name === 'draw') updateCostBtn();
-  if (name === 'history') {
-    // lastDrawのserveIdxesをgameHistoryの該当レコードに同期
-    if (lastDraw && gameHistory.length > 0) {
-      var last = gameHistory[gameHistory.length - 1];
-      if (last.round === lastDraw.round) {
-        last.serveIdxes = lastDraw.serveIdxes;
-      }
-    }
-    renderHistory();
-  }
-}
-
-function getPlayers() {
-  var result = [];
-  for (var i = 0; i < playerCount; i++) {
-    var el = document.getElementById('p' + i);
-    var v = el ? el.value.trim() : '';
-    result.push(v ? v : String(i + 1));
-  }
-  return result;
-}
-
-function goToDraw() {
-  var td = document.getElementById('tab-draw');
-  var th = document.getElementById('tab-history');
-  if (td) { td.disabled = false; td.style.cursor = 'pointer'; td.style.opacity = '1'; }
-  if (th) { th.disabled = false; th.style.cursor = 'pointer'; th.style.opacity = '1'; }
-  switchTab('draw');
-  doDraw(false);
-  updateCostBtn();
-}
-
-function shuffle(arr) {
-  var a = arr.slice();
-  for (var i = a.length-1; i > 0; i--) {
-    var j = Math.floor(Math.random()*(i+1));
-    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-  }
-  return a;
-}
-
-function getPairKey(a, b) { return [a, b].sort().join('|||'); }
-function getPairCount(a, b) { return pairHistory[getPairKey(a, b)] || 0; }
-
-function shuffleWithPairAvoidance(players) {
-  var best = null, bestScore = Infinity;
-  for (var attempt = 0; attempt < 100; attempt++) {
-    var shuffled = shuffle(players);
-    var score = 0;
-    for (var i = 0; i + 3 < shuffled.length; i += 4) {
-      score += getPairCount(shuffled[i], shuffled[i+1]);
-      score += getPairCount(shuffled[i+2], shuffled[i+3]);
-    }
-    if (score < bestScore) { bestScore = score; best = shuffled; if (score === 0) break; }
-  }
-  return best;
-}
-
-function getServeIdx(court) {
-  // サーブ回数が最も少ない人を選ぶ（同回数の場合はランダム）
-  if (!serveEnabled) return -1;
-  var minCount = Infinity;
-  var candidates = [];
-  for (var si = 0; si < court.length; si++) {
-    var cnt = serveHistory[court[si]] || 0;
-    if (cnt < minCount) { minCount = cnt; candidates = [si]; }
-    else if (cnt === minCount) { candidates.push(si); }
-  }
-  return candidates[Math.floor(Math.random() * candidates.length)];
-}
-
-function recordServe(court, serveIdx) {
-  if (serveIdx >= 0 && court[serveIdx]) {
-    serveHistory[court[serveIdx]] = (serveHistory[court[serveIdx]] || 0) + 1;
-  }
-}
-
-function savePairs(courts, round, serveIdxes) {
-  courts.forEach(function(c) {
-    var k1 = getPairKey(c[0], c[1]);
-    var k2 = getPairKey(c[2], c[3]);
-    pairHistory[k1] = (pairHistory[k1] || 0) + 1;
-    pairHistory[k2] = (pairHistory[k2] || 0) + 1;
-  });
-  gameHistory.push({ round: round, courts: JSON.parse(JSON.stringify(courts)), serveIdxes: serveIdxes || [] });
-}
-
-function doDraw(keepOrder) {
-  var el = document.getElementById('drawResult');
-  var prevBody = document.getElementById('prevResultBody');
-  var players = noNameMode
-    ? (function() { var arr = []; for (var i = 0; i < playerCount; i++) arr.push(String(i+1)); return arr; })()
-    : getPlayers();
-
-  if (players.length < 4) {
-    el.innerHTML = '<div class="warn">' + t('warn_min') + '</div>';
-    lastDraw = null; return;
-  }
-
-  var courts, leftover, serveIdxes, currentRound;
-
-  if (keepOrder && lastDraw) {
-    // サーブON/OFF切り替え時：組み合わせそのまま、serveIdxesだけ更新済み
-    courts = lastDraw.courts;
-    leftover = lastDraw.leftover;
-    serveIdxes = lastDraw.serveIdxes;
-    currentRound = lastDraw.round || drawCount;
-  } else if (!keepOrder && lastDraw && lastDraw.nextCourts) {
-    // 2回目以降：前回の「次回の試合」をそのまま現在に
-    // まず現在の試合を前回として保存
-    if (prevBody) prevBody.innerHTML = lastDraw.simpleHtml || '';
-    var pna2 = document.getElementById('prevNextArea');
-    if (pna2) pna2.style.display = 'block';
-
-    courts = lastDraw.nextCourts;
-    leftover = lastDraw.nextLeftover || [];
-    serveIdxes = lastDraw.nextServeIdxes || courts.map(function(c) { return getServeIdx(c); });
-    courts.forEach(function(c, i) { recordServe(c, serveIdxes[i]); });
-    drawCount++;
-    currentRound = drawCount;
-    savePairs(courts, currentRound, serveIdxes);
-  } else {
-    // 初回抽選
-    if (!keepOrder && lastDraw && lastDraw.simpleHtml) {
-      if (prevBody) prevBody.innerHTML = lastDraw.simpleHtml;
-      var pna3 = document.getElementById('prevNextArea');
-      if (pna3) pna3.style.display = 'block';
-    }
-    var shuffled = shuffleWithPairAvoidance(players);
-    courts = [];
-    if (shuffled.length >= 4) courts.push(shuffled.slice(0, 4));
-    leftover = shuffled.slice(4);
-    serveIdxes = courts.map(function(c) { return getServeIdx(c); });
-    courts.forEach(function(c, i) { recordServe(c, serveIdxes[i]); });
-    drawCount++;
-    currentRound = drawCount;
-    savePairs(courts, currentRound, serveIdxes);
-  }
-
-  var colors = ['#CCDD39','#A0AA20','#B8C830','#8A9418'];
-  var html = '';
-  courts.forEach(function(c, i) {
-    var col = colors[i % colors.length];
-    var si = serveIdxes[i];
-    function pname(name, idx) {
-      return (serveEnabled && si >= 0 && idx === si)
-        ? '<div class="pname server">🎾 ' + name + '</div>'
-        : '<div class="pname">' + name + '</div>';
-    }
-    html += '<div style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden">'
-      + '<div style="background:' + col + ';color:#1a1a1a;padding:8px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px">' + '<svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink:0;margin-right:2px"><ellipse cx="7" cy="6" rx="5" ry="6" fill="none" stroke="#1a1a1a" stroke-width="1.8"/><line x1="4" y1="3.5" x2="10" y2="3.5" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><line x1="3.5" y1="6" x2="10.5" y2="6" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><line x1="4" y1="8.5" x2="10" y2="8.5" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><line x1="5.5" y1="1" x2="5.5" y2="11.5" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><line x1="7" y1="0.5" x2="7" y2="12" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><line x1="8.5" y1="1" x2="8.5" y2="11.5" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><rect x="6.2" y="11.8" width="1.6" height="4" rx="0.8" fill="#1a1a1a"/></svg>' + ' ' + t('court_label') + currentRound + t('court_suffix') + '</div>'
-      + '<div style="padding:12px"><div class="vs-grid">'
-      + '<div class="team">' + pname(c[0],0) + pname(c[1],1) + '</div>'
-      + '<div class="vs-text">VS</div>'
-      + '<div class="team">' + pname(c[2],2) + pname(c[3],3) + '</div>'
-      + '</div></div></div>';
-  });
-  if (leftover.length > 0) {
-    html += '<div class="leftover-card"><div class="leftover-lbl">' + (i18n['waiting_label'] || 'WAITING') + '</div><div class="chips">'
-      + leftover.map(function(p) { return '<span class="chip">' + p + '</span>'; }).join('')
-      + '</div></div>';
-  }
-
-  var simpleHtml = '';
-  courts.forEach(function(c) {
-    simpleHtml += '<div style="border-left:3px solid var(--border);padding:6px 10px;margin-bottom:6px;font-size:13px;color:var(--text2)">'
-      + c[0] + '・' + c[1] + ' <span style="color:var(--text3);font-weight:700">vs</span> ' + c[2] + '・' + c[3]
-      + '</div>';
-  });
-
-  lastDraw = { courts: courts, leftover: leftover, time: new Date(), simpleHtml: simpleHtml, serveIdxes: serveIdxes, round: currentRound };
-  el.innerHTML = html;
-  generateNextPreview(players);
-}
-
-function toggleServe() {
-  serveEnabled = !serveEnabled;
-  var sbSpan = document.getElementById('t-serve-btn');
-  if (sbSpan) sbSpan.textContent = serveEnabled ? t('serve_btn_on') : t('serve_btn');
-  document.getElementById('serveBtn').classList.toggle('active', serveEnabled);
-  if (lastDraw) {
-    // サーブを新しく計算して現在の試合を再描画
-    lastDraw.serveIdxes = lastDraw.courts.map(function(c) {
-      return getServeIdx(c);
-    });
-    // gameHistoryの最新レコードも更新
-    if (gameHistory.length > 0) {
-      var last = gameHistory[gameHistory.length - 1];
-      if (last.round === lastDraw.round) {
-        last.serveIdxes = lastDraw.serveIdxes;
-      }
-    }
-    doDraw(true);
-  }
-}
-
-function generateNextPreview(players, forceRedraw) {
-  var nextBody = document.getElementById('nextResultBody');
-  if (!nextBody || players.length < 4) return;
-  // 既に次回の組み合わせが保存されていればそれを使う（再生成しない）
-  var nextCourts, nextLeftover, reusingNext;
-  if (!forceRedraw && lastDraw && lastDraw.nextCourts) {
-    nextCourts = lastDraw.nextCourts;
-    nextLeftover = lastDraw.nextLeftover || [];
-    reusingNext = true;
-  } else {
-    var nextShuffled = shuffleWithPairAvoidance(players);
-    nextCourts = [];
-    if (nextShuffled.length >= 4) nextCourts.push(nextShuffled.slice(0, 4));
-    nextLeftover = nextShuffled.slice(4);
-    reusingNext = false;
-  }
-  var colors = ['#CCDD39','#A0AA20','#B8C830','#8A9418'];
-  var html = '';
-  var nextServeIdxes = (reusingNext && lastDraw && lastDraw.nextServeIdxes) ? lastDraw.nextServeIdxes : [];
-  var generatingServe = !(reusingNext && lastDraw && lastDraw.nextServeIdxes);
-  nextCourts.forEach(function(c, i) {
-    var col = colors[i % colors.length];
-    var nextServeIdx = generatingServe ? getServeIdx(c) : nextServeIdxes[i];
-    if (generatingServe) nextServeIdxes.push(nextServeIdx);
-    function npname(name, idx) {
-      return serveEnabled && idx === nextServeIdx ? '<strong style="color:#FFFFFF">🎾 ' + name + '</strong>' : name;
-    }
-    html += '<div style="border-left:3px solid #CCDD39;padding:6px 10px;margin-bottom:6px;font-size:13px;color:#FFFFFF">'
-      + npname(c[0],0) + ' ・ ' + npname(c[1],1) + ' <span style="color:var(--text3);font-weight:700">vs</span> ' + npname(c[2],2) + ' ・ ' + npname(c[3],3)
-      + '</div>';
-  });
-  nextBody.innerHTML = html;
-  // 次回の組み合わせとサーブをlastDrawに保存
-  if (lastDraw) { lastDraw.nextCourts = nextCourts; lastDraw.nextLeftover = nextLeftover; lastDraw.nextServeIdxes = nextServeIdxes; }
-  // 以前の結果がある場合のみprevNextAreaを表示
-  var pna = document.getElementById('prevNextArea');
-  if (pna) pna.style.display = 'block';
-}
-
-function showCostResult() {
-  var cost = getCostValue();
-  if (!cost || playerCount < 4) { alert(t('cost_alert')); return; }
-  var pp = Math.ceil(cost / playerCount);
-  document.getElementById('perPersonDraw').textContent = pp.toLocaleString();
-  var currency = currentLang === 'kr' ? '원' : '¥';
-  var currencyEl = document.getElementById('costCurrency');
-  if (currencyEl) currencyEl.textContent = currentLang === 'kr' ? '' : '¥';
-  var totalEl = document.getElementById('costTotalDraw');
-  if (totalEl) {
-    if (currentLang === 'kr') {
-      totalEl.textContent = pp.toLocaleString() + '원 × ' + playerCount + ' = ' + (pp * playerCount).toLocaleString() + '원';
-    } else {
-      totalEl.textContent = '¥' + pp.toLocaleString() + ' × ' + playerCount + ' = ¥' + (pp * playerCount).toLocaleString();
-    }
-  }
-  document.getElementById('costResultDraw').style.display = 'block';
-}
-
-function renderHistory() {
-  var list = document.getElementById('historyList');
-  if (gameHistory.length === 0) {
-    list.innerHTML = '<div class="empty"><div class="empty-icon">🤝</div>' + t('history_empty') + '</div>';
-    return;
-  }
-  var allRows = [];
-  gameHistory.slice().reverse().forEach(function(g) {
-    g.courts.forEach(function(c, ci) {
-      var si = g.serveIdxes ? g.serveIdxes[ci] : -1;
-      allRows.push({ g: g, c: c, si: si });
-    });
-  });
-  var rl = i18n['round_label'] || '';
-  var rs = i18n['round_suffix'] || '';
-  var html = '<div style="background:var(--surface);border:2px solid #CCDD39;border-radius:var(--radius);overflow:hidden;">';
-  allRows.forEach(function(row, idx) {
-    var g = row.g, c = row.c, si = row.si;
-    function hname(name, i) {
-      return (si >= 0 && i === si) ? '🎾 ' + name : name;
-    }
-    var isLast = idx === allRows.length - 1;
-    html += '<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;' + (isLast ? '' : 'border-bottom:1px solid #333;') + '">'
-      + '<span style="font-size:11px;font-weight:700;color:#CCDD39;white-space:nowrap;min-width:52px">' + rl + g.round + rs + '</span>'
-      + '<span style="font-size:14px;color:#FFFFFF;flex:1">' + hname(c[0],0) + ' ・ ' + hname(c[1],1) + ' <span style="color:#888;font-weight:700">vs</span> ' + hname(c[2],2) + ' ・ ' + hname(c[3],3) + '</span>'
-      + '</div>';
-  });
-  html += '</div>';
-  list.innerHTML = html;
-}
-
-function startVoiceCount() {
+function startVoiceCount(inputId, btnId, min, max, callback) {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { alert(t('voice_not_supported')); return; }
-  var btn = document.getElementById('micCount');
-  var inp = document.getElementById('cntInput');
+  var btn = document.getElementById(btnId);
+  var inp = document.getElementById(inputId);
   if (activeRecognition) { activeRecognition.stop(); activeRecognition = null; return; }
   var rec = new SR();
-  rec.lang = currentLang === 'ja' ? 'ja-JP' : currentLang === 'kr' ? 'ko-KR' : 'en-US';
-  rec.interimResults = false; rec.maxAlternatives = 1;
+  rec.lang = 'ja-JP';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
   activeRecognition = rec;
+  btn.classList.add('recording');
   btn.textContent = '🔴';
   rec.onresult = function(e) {
     var transcript = e.results[0][0].transcript;
-    var num = '';
-    if (currentLang === 'en') {
-      var words = {'one':'1','two':'2','three':'3','four':'4','five':'5','six':'6','seven':'7','eight':'8','nine':'9','ten':'10','eleven':'11','twelve':'12'};
-      var t2 = transcript.toLowerCase().replace(/people|players|person/g,'').trim();
-      num = words[t2] || t2.replace(/[^0-9]/g,'');
-    } else {
-      num = transcript.replace(/人|명|回/g,'').replace(/[^0-9０-９]/g,'');
-      if (!num) {
-        var kanjiMap = {'四':'4','五':'5','六':'6','七':'7','八':'8','九':'9','十':'10','十一':'11','十二':'12'};
-        num = kanjiMap[transcript.replace(/人|명/g,'')] || '';
-      }
+    var num = transcript.replace(/人|回/g, '').replace(/[^\d０-９]/g, '')
+      .replace(/[０-９]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+    if (!num) {
+      var kanji = {'一':'1','二':'2','三':'3','四':'4','五':'5','六':'6','七':'7','八':'8','九':'9','十':'10','十一':'11','十二':'12','十三':'13','十四':'14','十五':'15','十六':'16','十七':'17','十八':'18','十九':'19','二十':'20'};
+      num = kanji[transcript.replace(/人|回/g,'')] || '';
     }
-    if (num) { inp.value = num; confirmCount(); }
-    btn.textContent = '🎤'; activeRecognition = null;
+    if (num) { inp.value = num; if (callback) callback(); }
+    btn.classList.remove('recording'); btn.textContent = '🎤';
+    activeRecognition = null;
   };
-  rec.onerror = function() { btn.textContent = '🎤'; activeRecognition = null; };
-  rec.onend = function() { btn.textContent = '🎤'; activeRecognition = null; };
+  rec.onerror = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
+  rec.onend = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
   rec.start();
+}
+
+function convertToKatakana(text, callback) {
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 50,
+      messages: [{
+        role: 'user',
+        content: '次の日本語をカタカナに変換してください。カタカナのみ返してください（説明不要）: ' + text
+      }]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var result = data.content && data.content[0] ? data.content[0].text.trim() : text;
+    // カタカナ以外を除去
+    result = result.replace(/[^゠-ヿ]/g, '').slice(0, 12);
+    callback(result || text);
+  })
+  .catch(function() { callback(text); });
 }
 
 function startVoice(idx) {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { alert(t('voice_not_supported')); return; }
   var btn = document.getElementById('mic' + idx);
-  var inp = document.getElementById('p' + idx);
+  var inp = document.getElementById('pname' + idx);
   if (activeRecognition) { activeRecognition.stop(); activeRecognition = null; return; }
   var rec = new SR();
-  rec.lang = currentLang === 'ja' ? 'ja-JP' : currentLang === 'kr' ? 'ko-KR' : 'en-US';
-  rec.interimResults = false; rec.maxAlternatives = 5;
+  rec.lang = 'ja-JP';
+  rec.interimResults = false;
+  rec.maxAlternatives = 5;
   activeRecognition = rec;
-  btn.classList.add('recording'); btn.textContent = '🔴';
+  btn.classList.add('recording');
+  btn.textContent = '🔴';
   rec.onresult = function(e) {
     var best = null;
     for (var k = 0; k < e.results[0].length; k++) {
@@ -810,15 +384,18 @@ function startVoice(idx) {
       if (/^[\u3041-\u30FF\s]+$/.test(candidate)) { best = candidate; break; }
     }
     if (!best) best = e.results[0][0].transcript;
-    var t2 = best.slice(0, 12).replace(/[\u30A1-\u30F6]/g, function(c) {
+    btn.classList.remove('recording'); btn.textContent = '🎤';
+    activeRecognition = null;
+
+    // カタカナ→ひらがな変換、漢字はそのまま入力
+    var tt = best.slice(0, 12).replace(/[\u30A1-\u30F6]/g, function(c) {
       return String.fromCharCode(c.charCodeAt(0) - 0x60);
-    }).replace(/[^\u3041-\u3096\uAC00-\uD7A3a-zA-Z0-9\s]/g, '').trim();
-    if (!t2) t2 = best.slice(0, 12);
-    inp.value = t2;
-    btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null;
+    }).trim();
+    if (!tt) tt = best.slice(0, 12);
+    inp.value = tt;
     if (idx < playerCount - 1) {
       setTimeout(function() {
-        var next = document.getElementById('p' + (idx+1));
+        var next = document.getElementById('pname' + (idx + 1));
         if (next) next.focus();
       }, 150);
     }
@@ -827,50 +404,435 @@ function startVoice(idx) {
   rec.onend = function() { btn.classList.remove('recording'); btn.textContent = '🎤'; activeRecognition = null; };
   rec.start();
 }
+var gameCount = 0;
+var noNameMode = false;
+var players = [];
+var games = [];
+var isFinished = false;
 
-function resetAll() {
-  var cntInput = document.getElementById('cntInput');
-  if (cntInput) cntInput.value = '';
-  var costInput = document.getElementById('costInput');
-  if (costInput) costInput.value = '';
-  document.getElementById('costResultDraw').style.display = 'none';
-  updateCostBtn();
-  document.getElementById('cntError').style.display = 'none';
-  document.getElementById('step2Card').style.display = 'none';
-  document.getElementById('nameList').innerHTML = '';
-  document.getElementById('noNameChk').checked = false;
-  playerCount = 0; lastDraw = null; serveEnabled = false; noNameMode = false; drawCount = 0; pairHistory = {}; gameHistory = []; serveHistory = {};
-  var sb = document.getElementById('serveBtn');
-  if (sb) { sb.classList.remove('active'); }
-  var sbSpan = document.getElementById('t-serve-btn');
-  if (sbSpan) sbSpan.textContent = t('serve_btn');
-  document.getElementById('drawResult').innerHTML = '<div class="empty"><div class="empty-icon">🎾</div><span id="t-draw-empty">' + t('draw_empty') + '</span></div>';
-  var pna = document.getElementById('prevNextArea');
-  if (pna) pna.style.display = 'none';
-  var prevBodyR = document.getElementById('prevResultBody');
-  if (prevBodyR) prevBodyR.innerHTML = '';
-  var goBtn = document.getElementById('goDrawBtn');
-  goBtn.disabled = true; goBtn.style.opacity = '0.4'; goBtn.style.cursor = 'not-allowed';
-  // タブを非活性
-  var td = document.getElementById('tab-draw');
-  var th = document.getElementById('tab-history');
-  if (td) { td.disabled = true; td.style.cursor = 'not-allowed'; td.style.opacity = '0.35'; td.classList.remove('active'); }
-  if (th) { th.disabled = true; th.style.cursor = 'not-allowed'; th.style.opacity = '0.35'; th.classList.remove('active'); }
-  switchTab('players');
-  document.getElementById('resetBtn').style.display = 'block';
-  setTimeout(function() { var ci = document.getElementById('cntInput'); if (ci) ci.focus(); }, 100);
+function onNoNameChange() {
+  noNameMode = document.getElementById('noNameChk').checked;
+  onSettingChange();
 }
 
-// ===== 初期化 =====
-window.addEventListener('load', function() {
-  var saved = localStorage.getItem('tennis_draw_lang') || 'en';
-  setLang(saved);
-});
+function onSettingChange() {
+  var pc = parseInt(document.getElementById('playerCountInput').value) || 0;
+  var gc = parseInt(document.getElementById('gameCountInput').value) || 0;
+  var err = document.getElementById('countError');
+  var nameCard = document.getElementById('nameCard');
+  var startBtn = document.getElementById('startBtn');
+
+  if (pc >= 4 && pc <= 20) {
+    err.style.display = 'none';
+    playerCount = pc;
+    if (!noNameMode) {
+      renderNameList();
+      nameCard.style.display = 'block';
+    } else {
+      nameCard.style.display = 'none';
+    }
+  } else {
+    if (pc > 0) { err.textContent = t('step1_err'); err.style.display = 'block'; }
+    nameCard.style.display = 'none';
+    playerCount = 0;
+  }
+
+  gameCount = gc;
+  var ok = playerCount >= 4 && gameCount >= 1;
+  startBtn.disabled = !ok;
+
+  // 1人あたりゲーム数を計算して表示
+  var gppCard = document.getElementById('gamesPerPersonCard');
+  if (playerCount >= 4 && gameCount >= 1) {
+    var gpp = (gameCount * 4 / playerCount).toFixed(1);
+    // .0は省略
+    if (gpp.endsWith('.0')) gpp = gpp.slice(0, -2);
+    var tpl = t('games_per_person') || '1人あたりゲーム数：{n}ゲーム';
+    document.getElementById('t-games-per-person').textContent = tpl.replace('{n}', gpp);
+    gppCard.style.display = 'block';
+  } else {
+    gppCard.style.display = 'none';
+  }
+}
+
+function renderNameList() {
+  var list = document.getElementById('nameList');
+  var existing = Array.from(list.querySelectorAll('.name-input')).map(function(i) { return i.value; });
+  list.innerHTML = '';
+  for (var i = 0; i < playerCount; i++) {
+    var row = document.createElement('div');
+    row.className = 'name-row';
+    var num = document.createElement('div');
+    num.className = 'name-num';
+    num.textContent = i + 1;
+    var inp = document.createElement('input');
+    inp.className = 'name-input';
+    inp.id = 'pname' + i;
+    inp.type = 'text';
+    inp.placeholder = '';
+    inp.maxLength = 12;
+    inp.value = existing[i] || '';
+    var mic = document.createElement('button');
+    mic.className = 'mic-btn';
+    mic.id = 'mic' + i;
+    mic.textContent = '🎤';
+    mic.type = 'button';
+    (function(idx) {
+      mic.addEventListener('click', function() { startVoice(idx); });
+    })(i);
+    row.appendChild(num);
+    row.appendChild(inp);
+    row.appendChild(mic);
+    list.appendChild(row);
+  }
+}
+
+function getPlayers() {
+  var result = [];
+  for (var i = 0; i < playerCount; i++) {
+    if (noNameMode) {
+      result.push(String(i + 1));
+    } else {
+      var el = document.getElementById('pname' + i);
+      var v = el ? el.value.trim() : '';
+      result.push(v ? v : String(i+1));
+    }
+  }
+  return result;
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+var pairHistory = {};
+
+function getPairKey(a, b) { return [a, b].sort().join('|||'); }
+function getPairCount(a, b) { return pairHistory[getPairKey(a, b)] || 0; }
+
+// 各選手の出場回数を管理
+var playCount = {};
+
+function getPlayCount(p) { return playCount[p] || 0; }
+
+function selectFourPlayers(arr) {
+  // 出場回数でグループ分けして、少ない順に4人選ぶ
+  // 同じ回数のグループ内はランダム
+  var sorted = arr.slice().sort(function(a, b) {
+    var diff = getPlayCount(a) - getPlayCount(b);
+    return diff !== 0 ? diff : Math.random() - 0.5;
+  });
+  // 最小回数のグループと次のグループを分けて処理
+  var groups = [];
+  var current = [];
+  var currentCount = -1;
+  sorted.forEach(function(p) {
+    var cnt = getPlayCount(p);
+    if (cnt !== currentCount) {
+      if (current.length > 0) groups.push(shuffle(current));
+      current = [p];
+      currentCount = cnt;
+    } else {
+      current.push(p);
+    }
+  });
+  if (current.length > 0) groups.push(shuffle(current));
+  // グループを順に取り出して4人になるまで選ぶ
+  var selected = [];
+  for (var gi = 0; gi < groups.length && selected.length < 4; gi++) {
+    var need = 4 - selected.length;
+    var grp = groups[gi];
+    if (grp.length <= need) {
+      selected = selected.concat(grp);
+    } else {
+      // グループから必要な人数だけランダムに選ぶ
+      selected = selected.concat(grp.slice(0, need));
+    }
+  }
+  var rest = arr.filter(function(p) { return selected.indexOf(p) === -1; });
+  return selected.concat(rest);
+}
+
+function shuffleWithPairAvoidance(arr) {
+  var best = null, bestScore = Infinity;
+  var selected = selectFourPlayers(arr);
+  // 選ばれた4人の中でペア重複を最小化
+  var front4 = selected.slice(0, 4);
+  var rest = selected.slice(4);
+  for (var t = 0; t < 100; t++) {
+    var s = shuffle(front4);
+    var score = getPairCount(s[0], s[1]) + getPairCount(s[2], s[3]);
+    if (score < bestScore) { bestScore = score; best = s; if (score === 0) break; }
+  }
+  return best.concat(rest);
+}
+
+function startGame() {
+  players = getPlayers();
+  games = [];
+  pairHistory = {};
+  playCount = {};
+
+  for (var g = 0; g < gameCount; g++) {
+    var shuffled = shuffleWithPairAvoidance(players);
+    var teamA = [shuffled[0], shuffled[1]];
+    var teamB = [shuffled[2], shuffled[3]];
+    var waiting = shuffled.slice(4);
+    // ペア記録
+    var k1 = getPairKey(teamA[0], teamA[1]);
+    var k2 = getPairKey(teamB[0], teamB[1]);
+    pairHistory[k1] = (pairHistory[k1] || 0) + 1;
+    pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+    // 出場回数を記録（先に更新してスナップショット保存）
+    teamA.concat(teamB).forEach(function(p) { playCount[p] = (playCount[p] || 0) + 1; });
+    var snapCount = {};
+    teamA.concat(teamB).forEach(function(p) { snapCount[p] = playCount[p]; });
+    games.push({ id: g, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null, snapCount: snapCount });
+  }
+
+  renderGames();
+  enableTab('game');
+  showScreen('game');
+  window.scrollTo(0, 0);
+}
+
+function renderGames() {
+  var list = document.getElementById('gameList');
+  list.innerHTML = '';
+  games.forEach(function(g, i) {
+    var isActive = !g.done && (i === 0 || games[i-1].done);
+    var card = document.createElement('div');
+    card.className = 'game-card' + (g.done ? ' done' : (isActive ? ' active' : ''));
+    card.id = 'game-card-' + i;
+
+    var headerClass = g.done ? 'done' : (isActive ? 'active' : '');
+    var headerIcon = g.done ? '✅' : (isActive ? '🎾' : '⏳');
+    var headerTitle = t('game_title').replace('{n}', i+1);
+    var scoreSum = '';
+    var collapsed = g.done && !g.expanded && !isFinished;
+
+    var header = '<div class="game-header ' + headerClass + '" style="' + (g.done && !isFinished ? 'cursor:pointer' : '') + '">'
+      + '<span class="game-title" ' + (g.done && !isFinished ? 'onclick="toggleGame(' + i + ')"' : '') + ' style="flex:1">' + headerIcon + ' ' + headerTitle + (g.done ? scoreSum : '') + '</span>'
+      + (g.done && !isFinished ? '<button class="edit-btn" onclick="event.stopPropagation();editGame(' + i + ')" style="margin-right:6px;font-size:11px;padding:3px 8px" title="点数変更">✏️</button>' : '')
+      + (g.done && !isFinished ? '<span style="font-size:12px" onclick="toggleGame(' + i + ')">' + (collapsed ? '▶' : '▼') + '</span>' : '')
+      + '</div>';
+
+    var teamAClass = 'team' + (g.winner === 'A' ? ' winner' : '');
+    var teamBClass = 'team' + (g.winner === 'B' ? ' winner' : '');
+    var winIconA = g.winner === 'A' ? ' 🏆' : '';
+    var winIconB = g.winner === 'B' ? ' 🏆' : '';
+
+    function pnameWithCount(name, snap) {
+      var cnt = snap ? (snap[name] || '') : '';
+      return '<div class="pname">' + name + (cnt ? '<span style="font-size:10px;color:#CCCCCC;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
+    }
+    var snap = g.snapCount || {};
+    var winLblA = g.winner === 'A' ? ' 🏆' : '';
+    var winLblB = g.winner === 'B' ? ' 🏆' : '';
+    var body = '<div class="game-body">'
+      + '<div class="vs-grid">'
+      + '<div class="' + teamAClass + '">' + (winLblA ? '<div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">🏆</div>' : '') + pnameWithCount(g.teamA[0], snap) + pnameWithCount(g.teamA[1], snap) + '</div>'
+      + '<div class="vs-text">VS</div>'
+      + '<div class="' + teamBClass + '">' + (winLblB ? '<div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">🏆</div>' : '') + pnameWithCount(g.teamB[0], snap) + pnameWithCount(g.teamB[1], snap) + '</div>'
+      + '</div>';
+
+
+
+    if (g.done) {
+      body += '<div class="score-inputs" style="margin-top:8px">'
+        + '<div class="score-input done" style="text-align:center">' + g.scoreA + '</div>'
+        + '<div class="score-vs">-</div>'
+        + '<div class="score-input done" style="text-align:center">' + g.scoreB + '</div>'
+        + '</div>';
+    } else if (isActive) {
+      body += '<div class="score-row">'
+        + '<div class="score-inputs">'
+        + '<input class="score-input" id="scoreA-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreA + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ');if(this.value.length>=1)document.getElementById(\'scoreB-' + i + '\').focus();">'
+        + '<div class="score-vs">-</div>'
+        + '<input class="score-input" id="scoreB-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreB + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ')">'
+        + '</div>'
+        + '<button class="confirm-btn" id="confirmBtn-' + i + '" onclick="confirmScore(' + i + ')" disabled>' + t('confirm_btn') + '</button>'
+        + '</div>';
+    }
+
+
+    body += '</div>';
+    if (g.done && !g.expanded && !isFinished) {
+      card.innerHTML = header;
+    } else {
+      card.innerHTML = header + body;
+    }
+    list.appendChild(card);
+  });
+  // ボタン状態を常に同期
+  var ab = document.getElementById('addGameBtn');
+  var eb = document.getElementById('endGameBtn');
+  if (ab) ab.disabled = isFinished;
+  if (eb) eb.disabled = isFinished;
+}
+
+function checkScore(idx) {
+  var a = document.getElementById('scoreA-' + idx);
+  var b = document.getElementById('scoreB-' + idx);
+  var btn = document.getElementById('confirmBtn-' + idx);
+  if (!btn) return;
+  var ok = a && b && a.value !== '' && b.value !== '';
+  btn.disabled = !ok;
+}
+
+function confirmScore(idx) {
+  var sA = document.getElementById('scoreA-' + idx).value;
+  var sB = document.getElementById('scoreB-' + idx).value;
+  if (sA === '' || sB === '') { alert(t('score_alert')); return; }
+  var a = parseInt(sA), b = parseInt(sB);
+  games[idx].scoreA = sA;
+  games[idx].scoreB = sB;
+  games[idx].done = true;
+  games[idx].expanded = false;
+  games[idx].winner = a > b ? 'A' : (b > a ? 'B' : null);
+  renderGames();
+}
+
+function toggleGame(idx) {
+  games[idx].expanded = !games[idx].expanded;
+  renderGames();
+}
+
+function editGame(idx) {
+  games[idx].done = false;
+  games[idx].winner = null;
+  renderGames();
+  // 既存の値があれば確定ボタンを活性化
+  setTimeout(function() { checkScore(idx); }, 50);
+}
+
+function showResult() {
+  isFinished = true;
+  document.body.classList.add('finished');
+  var chk = document.getElementById('noNameChk');
+  if (chk) chk.disabled = true;
+  // 未完了ゲームを除外
+  games = games.filter(function(g) { return g.done; });
+  enableTab('result');
+  renderGames();
+  var stats = {};
+  players.forEach(function(p) { stats[p] = { wins: 0, points: 0 }; });
+
+  games.forEach(function(g) {
+    if (!g.done) return;
+    var sA = parseInt(g.scoreA) || 0;
+    var sB = parseInt(g.scoreB) || 0;
+    // 得点を各選手に加算
+    g.teamA.forEach(function(p) { if (stats[p]) stats[p].points += sA; });
+    g.teamB.forEach(function(p) { if (stats[p]) stats[p].points += sB; });
+    // 勝利数
+    if (!g.winner) return;
+    var winners = g.winner === 'A' ? g.teamA : g.teamB;
+    winners.forEach(function(p) { if (stats[p]) stats[p].wins += 1; });
+  });
+
+  var sorted = Object.keys(stats).map(function(p) {
+    return { name: p, wins: stats[p].wins, points: stats[p].points };
+  }).sort(function(a, b) {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    return b.points - a.points; // 勝利数同じ場合は得点合計で決める
+  });
+
+  var rankList = document.getElementById('rankList');
+  var medals = ['🥇', '🥈', '🥉'];
+  var medalClass = ['gold', 'silver', 'bronze'];
+  var html = '';
+  var rank = 1;
+  sorted.forEach(function(p, i) {
+    if (i > 0 && (p.wins < sorted[i-1].wins || (p.wins === sorted[i-1].wins && p.points < sorted[i-1].points))) rank = i + 1;
+    var medal = rank <= 3 ? medals[rank-1] : rank;
+    var cls = rank <= 3 ? medalClass[rank-1] : '';
+    html += '<div class="rank-row">'
+      + '<div class="rank-num ' + cls + '">' + medal + '</div>'
+      + '<div class="rank-name">' + p.name + '</div>'
+      + '<div style="text-align:right;font-size:14px;font-weight:700;color:var(--green);min-width:36px">' + p.wins + t('wins') + '</div>'
+      + '<div style="text-align:right;font-size:14px;color:var(--text);font-weight:400;min-width:54px">（' + p.points + t('points_suffix') + '）</div>'
+      + '</div>';
+  });
+  rankList.innerHTML = html || '<div class="empty">' + t('no_result') + '</div>';
+
+  showScreen('result');
+}
+
+function addGame() {
+  if (players.length < 4) return;
+  var shuffled = shuffleWithPairAvoidance(players);
+  var teamA = [shuffled[0], shuffled[1]];
+  var teamB = [shuffled[2], shuffled[3]];
+  var waiting = shuffled.slice(4);
+  var k1 = getPairKey(teamA[0], teamA[1]);
+  var k2 = getPairKey(teamB[0], teamB[1]);
+  pairHistory[k1] = (pairHistory[k1] || 0) + 1;
+  pairHistory[k2] = (pairHistory[k2] || 0) + 1;
+  teamA.concat(teamB).forEach(function(p) { playCount[p] = (playCount[p] || 0) + 1; });
+  var snapCount2 = {};
+  teamA.concat(teamB).forEach(function(p) { snapCount2[p] = playCount[p]; });
+  var idx = games.length;
+  games.push({ id: idx, teamA: teamA, teamB: teamB, waiting: waiting, scoreA: '', scoreB: '', done: false, winner: null, snapCount: snapCount2 });
+  renderGames();
+}
+
+function showScreen(name) {
+  window.scrollTo(0, 0);
+  ['main','game','result'].forEach(function(n) {
+    document.getElementById('screen-' + n).classList.toggle('active', n === name);
+    var tab = document.getElementById('tab-' + n);
+    if (tab) tab.classList.toggle('active', n === name);
+  });
+  // ゲーム画面ボタン状態を同期（startBtnはonSettingChangeで管理するので除外）
+  var _ab = document.getElementById('addGameBtn');
+  var _eb = document.getElementById('endGameBtn');
+  if (_ab) _ab.disabled = isFinished;
+  if (_eb) _eb.disabled = isFinished;
+}
+function enableTab(name) {
+  var tab = document.getElementById('tab-' + name);
+  if (tab) tab.disabled = false;
+}
+
+function resetAll() {
+  playerCount = 0; gameCount = 0; noNameMode = false; players = []; games = []; pairHistory = {}; playCount = {}; isFinished = false;
+  document.body.classList.remove('finished');
+  document.getElementById('startBtn').style.display = '';
+  var ab = document.getElementById('addGameBtn');
+  var eb = document.getElementById('endGameBtn');
+  if (ab) ab.style.display = '';
+  if (eb) eb.style.display = '';
+  ['playerCountInput','gameCountInput'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.style.pointerEvents = ''; el.style.border = ''; el.style.background = ''; }
+  });
+  document.getElementById('playerCountInput').value = '';
+  document.getElementById('gameCountInput').value = '';
+  document.getElementById('noNameChk').checked = false;
+  document.getElementById('noNameChk').disabled = false;
+  document.getElementById('nameCard').style.display = 'none';
+  document.getElementById('nameList').innerHTML = '';
+  document.getElementById('gamesPerPersonCard').style.display = 'none';
+  document.getElementById('startBtn').disabled = true;
+  ['game','result'].forEach(function(n) {
+    var tab = document.getElementById('tab-' + n);
+    if (tab) tab.disabled = true;
+  });
+  showScreen('main');
+}
 </script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js');
+    navigator.serviceWorker.register('sw.js').then(function() {
+      console.log('SW registered');
+    });
   });
 }
 </script>
