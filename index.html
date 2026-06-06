@@ -631,7 +631,8 @@ function renderGames() {
       var cnt = snap ? (snap[name] || '') : '';
       var idx = players.indexOf(name);
       var num = idx >= 0 ? (idx + 1) : '';
-      var displayName = num ? '<span style="font-size:11px;color:#CCCCCC;margin-right:5px">' + num + '</span>' + name : name;
+      var isNumName = !isNaN(name.trim());
+      var displayName = (!isNumName && num) ? '<span style="font-size:14px;color:#CCCCCC;margin-right:5px">' + num + '</span>' + name : name;
       return '<div class="pname">' + displayName + (cnt ? '<span style="font-size:10px;color:#CCCCCC;margin-left:3px">(' + cnt + ')</span>' : '') + '</div>';
     }
     var snap = g.snapCount || {};
