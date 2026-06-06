@@ -47,7 +47,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .btn-danger { width: 100%; padding: 15px; background: #E24B4A; color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 12px; }
 
 /* ゲームカード */
-.game-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: visible; transition: all .3s; }
+.game-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; transition: all .3s; }
 .game-card.active { border-color: var(--green); }
 .game-card.done { border-color: #444; background: #1A1A1A; }
 .game-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--gray); color: #FFFFFF; }
@@ -113,7 +113,7 @@ body.finished #noNameChk { pointer-events: none; opacity: 0.4; }
 body.finished .mic-btn { display: none; }
 body.finished .input-row { background: transparent; border: none; }
 body.finished .name-input { pointer-events: none; color: #FFFFFF; }
-body.finished .name-row { background: transparent; border-color: #444; pointer-events: none; }
+body.finished .name-row { background: transparent; border: none; pointer-events: none; }
 </style>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -652,7 +652,7 @@ function renderGames() {
     } else if (isActive) {
       body += '<div class="score-row">'
         + '<div class="score-inputs">'
-        + '<input class="score-input" id="scoreA-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreA + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ')">'
+        + '<input class="score-input" id="scoreA-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreA + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ');if(this.value.length>=1)document.getElementById(\'scoreB-' + i + '\').focus();">'
         + '<div class="score-vs">-</div>'
         + '<input class="score-input" id="scoreB-' + i + '" type="number" inputmode="numeric" pattern="[0-9]*" placeholder="0" value="' + g.scoreB + '" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');checkScore(' + i + ')">'
         + '</div>'
