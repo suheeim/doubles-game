@@ -696,11 +696,14 @@ function confirmScore(idx) {
   games[idx].expanded = false;
   games[idx].winner = a > b ? 'A' : (b > a ? 'B' : null);
   renderGames();
-  // 次のゲームのscoreAにフォーカス
+  // 次のゲームのscoreAにフォーカス＋キーボード表示
   setTimeout(function() {
     var nextInput = document.getElementById('scoreA-' + (idx + 1));
-    if (nextInput) nextInput.focus();
-  }, 50);
+    if (nextInput) {
+      nextInput.focus();
+      nextInput.click();
+    }
+  }, 100);
 }
 
 function toggleGame(idx) {
